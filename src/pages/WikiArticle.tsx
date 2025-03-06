@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { ArticleViewer } from '../components/ArticleViewer';
@@ -22,6 +22,7 @@ interface RelatedArticle {
 
 export function WikiArticle() {
   const { category, article } = useParams();
+  const navigate = useNavigate();
 
   // Debugging-Informationen
   useEffect(() => {
@@ -42,6 +43,13 @@ export function WikiArticle() {
         throw err;
       }
     },
+    // Wenn der Artikel geladen wurde, aber die Kategorie nicht übereinstimmt, zur richtigen URL weiterleiten
+    onSuccess: (data) => {
+      if (data && data.category.toLowerCase() !== category?.toLowerCase()) {
+        console.log("Kategorie stimmt nicht überein, leite weiter zu:", `/wiki/${data.category.toLowerCase()}/${data.id}`);
+        navigate(`/wiki/${data.category.toLowerCase()}/${data.id}`, { replace: true });
+      }
+    }
   });
 
   // If there's an error or the article data is not available, ArticleViewer will handle it

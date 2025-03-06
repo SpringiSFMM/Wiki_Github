@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Search, Menu, X, Home, Sprout, Users, ExternalLink } from 'lucide-react';
+import { Search, Menu, X, Home, Sprout, Users, ExternalLink, ChevronDown } from 'lucide-react';
 
 export function Layout() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -10,7 +10,7 @@ export function Layout() {
   const mainNavItems = [
     { icon: <Home size={20} />, label: 'Home', path: '/' },
     { icon: <Sprout size={20} />, label: 'Wiki', path: '/wiki' },
-    { icon: <Users size={20} />, label: 'Community', path: '/community' },
+    { icon: <Users size={20} />, label: 'FWSites', path: '/fwsites' },
   ];
 
   return (
@@ -91,6 +91,7 @@ export function Layout() {
                   <span>{item.label}</span>
                 </Link>
               ))}
+              
               <div className="relative">
                 <input
                   type="text"
@@ -223,6 +224,9 @@ export function Layout() {
           <div className="mt-8 pt-8 border-t border-dark-800">
             <p className="text-center text-dark-400">
               &copy; {new Date().getFullYear()} Cactus Tycoon. All rights reserved.
+            </p>
+            <p className="text-center text-dark-400 mt-2">
+              Diese Wiki-Seite wurde von einem Community-Mitglied erstellt und stammt nicht offiziell von Cytooxien.
             </p>
           </div>
         </div>

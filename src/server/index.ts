@@ -218,6 +218,27 @@ app.get('/api/updates', async (req, res) => {
   }
 });
 
+// Get update by ID (public endpoint)
+app.get('/api/updates/:id', async (req, res) => {
+  try {
+    const [rows] = await pool.execute(`
+      SELECT u.id, u.title, u.content, u.created_at, u.updated_at, a.username as author
+      FROM updates u
+      JOIN admins a ON u.author_id = a.id
+      WHERE u.id = ? AND u.status = 'published'
+    `, [req.params.id]);
+    
+    if ((rows as any[]).length === 0) {
+      return res.status(404).json({ message: 'Update not found' });
+    }
+
+    res.json((rows as any[])[0]);
+  } catch (error) {
+    console.error('Error fetching update:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 // Get article by ID
 app.get('/api/articles/:id', async (req, res) => {
   try {

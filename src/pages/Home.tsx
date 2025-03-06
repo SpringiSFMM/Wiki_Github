@@ -77,6 +77,26 @@ export function Home() {
     }
   ];
 
+  // Funktion zum Kürzen von HTML-Inhalten
+  const truncateHTML = (html: string, maxLength: number) => {
+    if (html.length <= maxLength) return html;
+    
+    // Einfache Kürzung, die HTML-Tags berücksichtigt
+    // Für komplexere Fälle könnte eine HTML-Parser-Bibliothek verwendet werden
+    const truncated = html.substring(0, maxLength);
+    
+    // Prüfen, ob wir einen Tag abgeschnitten haben
+    const lastOpenTag = truncated.lastIndexOf('<');
+    const lastCloseTag = truncated.lastIndexOf('>');
+    
+    if (lastOpenTag > lastCloseTag) {
+      // Wir haben einen Tag abgeschnitten, kürzen wir vor dem letzten geöffneten Tag
+      return truncated.substring(0, lastOpenTag) + '...';
+    }
+    
+    return truncated + '...';
+  };
+
   // Fetch latest updates
   const { data: updates = [], isLoading } = useQuery<Update[]>({
     queryKey: ['latest-updates'],
@@ -209,16 +229,31 @@ export function Home() {
                   <div className="flex-shrink-0 w-16 h-16 bg-neon-500/10 rounded-lg flex items-center justify-center">
                     <Info className="h-8 w-8 text-neon-400" />
                   </div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-neon-400 mb-2">{update.title}</h3>
-                    <p className="text-dark-300 mb-3">
-                      {update.content.length > 150 ? update.content.substring(0, 150) + '...' : update.content}
-                    </p>
-                    <div className="flex items-center text-sm text-dark-400">
-                      <Clock className="h-4 w-4 mr-1" />
-                      <span>{format(new Date(update.created_at), 'MMMM d, yyyy')}</span>
-                      <span className="mx-2">•</span>
-                      <span>By {update.author}</span>
+                  <div className="flex-1">
+                    <Link to={`/updates/${update.id}`}>
+                      <h3 className="text-xl font-semibold text-neon-400 mb-2 hover:text-neon-300 transition-colors">{update.title}</h3>
+                    </Link>
+                    <div 
+                      className="text-dark-300 mb-3 update-content"
+                      dangerouslySetInnerHTML={{ 
+                        __html: update.content.length > 150 
+                          ? truncateHTML(update.content, 150) 
+                          : update.content 
+                      }}
+                    />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center text-sm text-dark-400">
+                        <Clock className="h-4 w-4 mr-1" />
+                        <span>{format(new Date(update.created_at), 'MMMM d, yyyy')}</span>
+                        <span className="mx-2">•</span>
+                        <span>By {update.author}</span>
+                      </div>
+                      <Link 
+                        to={`/updates/${update.id}`}
+                        className="text-sm text-neon-400 hover:text-neon-300 transition-colors"
+                      >
+                        Mehr lesen →
+                      </Link>
                     </div>
                   </div>
                 </div>

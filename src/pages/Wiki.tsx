@@ -207,8 +207,7 @@ export function Wiki() {
                     return (
                       <Link
                         key={article.id}
-                        to={`/test-article`}
-                        state={{ article: fullArticle }}
+                        to={`/wiki/${article.category.toLowerCase()}/${article.id}`}
                         className="block p-2 rounded hover:bg-dark-800 text-dark-200 hover:text-neon-400 transition-colors cursor-pointer flex items-center"
                         onClick={(e) => {
                           // Für Debugging-Zwecke
@@ -241,7 +240,7 @@ export function Wiki() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Jede Karte ist jetzt ein Link und vollständig klickbar */}
             <Link
-              to="/test-article"
+              to="/wiki/getting-started/new-player-guide"
               className="block p-4 rounded-lg bg-dark-800 hover:bg-dark-700 transition-colors group cursor-pointer"
             >
               <h3 className="text-neon-400 font-semibold mb-2 group-hover:text-neon-300">
@@ -250,7 +249,7 @@ export function Wiki() {
               <p className="text-dark-300">Everything you need to know to get started</p>
             </Link>
             <Link
-              to="/test-article"
+              to="/wiki/farming/farm-optimization"
               className="block p-4 rounded-lg bg-dark-800 hover:bg-dark-700 transition-colors group cursor-pointer"
             >
               <h3 className="text-neon-400 font-semibold mb-2 group-hover:text-neon-300">
@@ -259,7 +258,7 @@ export function Wiki() {
               <p className="text-dark-300">Tips and tricks for maximum efficiency</p>
             </Link>
             <Link
-              to="/test-article"
+              to="/wiki/automation/automation-basics"
               className="block p-4 rounded-lg bg-dark-800 hover:bg-dark-700 transition-colors group cursor-pointer"
             >
               <h3 className="text-neon-400 font-semibold mb-2 group-hover:text-neon-300">
