@@ -3,6 +3,10 @@ import cors from 'cors';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { pool } from './db';
+import dotenv from 'dotenv';
+
+// Lade Umgebungsvariablen
+dotenv.config();
 
 const app = express();
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
@@ -879,6 +883,13 @@ app.get('/api/admin/articles/:id/edit', authenticateToken, async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+
+// Nur starten, wenn nicht in Vercel-Umgebung
+if (process.env.VERCEL_ENV === undefined) {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+// Für Vercel Serverless Functions
+export default app;

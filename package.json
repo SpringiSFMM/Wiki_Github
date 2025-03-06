@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "setup-db": "tsx src/server/setup.ts",
-    "server": "tsx src/server/index.ts"
+    "server": "tsx src/server/index.ts",
+    "vercel-build": "vite build"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.25.0",

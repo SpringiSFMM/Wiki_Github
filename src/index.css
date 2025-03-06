@@ -1,101 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Artikel-Formatierung */
-.article-content {
-  color: white !important;
+@layer components {
+  .hover-glow {
+    @apply transition-shadow duration-300 hover:shadow-glow;
+  }
 }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Base Styles */
+body {
+  @apply bg-dark-950 text-dark-100 antialiased;
+}
+
+/* Article Content Styles */
+.article-content {
+  @apply text-dark-100;
+}
+
+.article-content h1,
+.article-content h2,
+.article-content h3,
+.article-content h4,
+.article-content h5,
+.article-content h6 {
+  @apply text-neon-400 font-bold mb-4;
+}
+
+.article-content h1 { @apply text-3xl; }
+.article-content h2 { @apply text-2xl; }
+.article-content h3 { @apply text-xl; }
+.article-content h4 { @apply text-lg; }
 
 .article-content p {
-  margin-bottom: 1em;
-  color: white !important;
+  @apply mb-4 leading-relaxed text-dark-200;
 }
 
-.article-content h1, 
-.article-content h2, 
-.article-content h3, 
-.article-content h4, 
-.article-content h5, 
-.article-content h6 {
-  color: #10b981 !important; /* neon-400 */
-  margin-top: 1.5em;
-  margin-bottom: 0.5em;
-}
-
-.article-content ul, 
+.article-content ul,
 .article-content ol {
-  margin-left: 1.5em;
-  margin-bottom: 1em;
-  color: white !important;
+  @apply mb-4 ml-6;
 }
 
 .article-content li {
-  margin-bottom: 0.5em;
-  color: white !important;
+  @apply mb-2 text-dark-200;
 }
 
 .article-content a {
-  color: #10b981 !important; /* neon-400 */
-  text-decoration: underline;
-}
-
-.article-content a:hover {
-  color: #059669 !important; /* neon-500 */
-}
-
-.article-content img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 0.5rem;
-  margin: 1em 0;
+  @apply text-neon-400 hover:text-neon-300 underline;
 }
 
 .article-content blockquote {
-  border-left: 4px solid #10b981; /* neon-400 */
-  padding-left: 1em;
-  margin-left: 0;
-  margin-right: 0;
-  font-style: italic;
-  color: #d1d5db !important; /* dark-300 */
+  @apply border-l-4 border-neon-500 pl-4 my-4 italic text-dark-300;
 }
 
 .article-content pre {
-  background-color: #1f2937; /* dark-800 */
-  padding: 1em;
-  border-radius: 0.5rem;
-  overflow-x: auto;
-  margin: 1em 0;
+  @apply bg-dark-800 p-4 rounded-lg overflow-x-auto my-4;
 }
 
 .article-content code {
-  background-color: #1f2937; /* dark-800 */
-  padding: 0.2em 0.4em;
-  border-radius: 0.25rem;
-  font-family: monospace;
+  @apply bg-dark-800 px-1.5 py-0.5 rounded text-sm font-mono;
 }
 
-/* Quill Editor Anpassungen */
-.ql-editor {
-  background-color: white;
-  color: #333;
-  min-height: 200px;
+.article-content img {
+  @apply max-w-full rounded-lg shadow-lg my-6;
 }
 
-.ql-toolbar {
-  background-color: #f3f4f6;
-  border-top-left-radius: 0.375rem;
-  border-top-right-radius: 0.375rem;
+/* Animation Classes */
+.hover-lift {
+  @apply transition-transform duration-300 hover:-translate-y-1;
 }
 
-.ql-container {
-  border-bottom-left-radius: 0.375rem;
-  border-bottom-right-radius: 0.375rem;
+/* Card Styles */
+.card {
+  @apply bg-dark-800 rounded-xl border border-dark-700 p-6 hover:border-neon-500/30 transition-colors duration-300;
 }
 
-/* Stelle sicher, dass der Text im Editor immer dunkel ist */
-.ql-editor p, .ql-editor h1, .ql-editor h2, .ql-editor h3, 
-.ql-editor h4, .ql-editor h5, .ql-editor h6, 
-.ql-editor ol, .ql-editor ul, .ql-editor li {
-  color: #333;
+/* Button Styles */
+.btn {
+  @apply px-4 py-2 rounded-lg font-medium transition-colors duration-300;
+}
+
+.btn-primary {
+  @apply bg-neon-500 text-dark-950 hover:bg-neon-600;
+}
+
+.btn-secondary {
+  @apply bg-dark-800 text-dark-200 hover:bg-dark-700 border border-dark-700;
+}
+
+/* Navigation Styles */
+.nav-link {
+  @apply text-dark-300 hover:text-neon-400 transition-colors duration-300;
+}
+
+.nav-link-active {
+  @apply text-neon-400;
+}
+
+/* Form Styles */
+.input {
+  @apply bg-dark-800 border border-dark-700 rounded-lg px-4 py-2 text-dark-100 focus:outline-none focus:ring-2 focus:ring-neon-500 focus:border-transparent transition-all duration-300;
+}
+
+.label {
+  @apply block text-sm font-medium text-dark-300 mb-2;
+}
+
+/* Glass Effect */
+.glass {
+  @apply bg-dark-900/90 backdrop-blur-lg border border-dark-800/50;
 }
