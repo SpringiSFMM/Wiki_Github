@@ -8,7 +8,6 @@ import { Home } from './pages/Home';
 import { Wiki } from './pages/Wiki';
 import { WikiCategory } from './pages/WikiCategory';
 import { WikiArticle } from './pages/WikiArticle';
-import { TestArticle } from './pages/TestArticle';
 import { Dashboard } from './pages/admin/Dashboard';
 import { ArticleEditor } from './pages/admin/ArticleEditor';
 import { Settings } from './pages/admin/Settings';
@@ -69,7 +68,6 @@ function App() {
               <Route path="/wiki" element={<Wiki />} />
               <Route path="/wiki/category/:category" element={<WikiCategory />} />
               <Route path="/wiki/:category/:article" element={<WikiArticle />} />
-              <Route path="/test-article" element={<TestArticle />} />
             </Route>
 
             {/* Auth Routes */}

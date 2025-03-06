@@ -37,6 +37,9 @@ export default {
       boxShadow: {
         glow: '0 0 20px rgba(16, 185, 129, 0.35)',
       },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+      },
     },
   },
   plugins: [],

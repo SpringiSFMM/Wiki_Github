@@ -109,13 +109,6 @@ export function Wiki() {
               strategies, and tips to become the ultimate cactus farmer.
             </p>
             
-            {/* Test Article Link */}
-            <div className="mb-6">
-              <Link to="/test-article" className="text-neon-400 hover:text-neon-300">
-                Testseite für Artikelansicht
-              </Link>
-            </div>
-            
             {/* Enhanced Search Bar */}
             <div className="max-w-2xl mx-auto">
               <div className={`relative group transition-all duration-300 ${
