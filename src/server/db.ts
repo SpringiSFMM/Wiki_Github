@@ -6,10 +6,10 @@ dotenv.config();
 
 // Verwende Umgebungsvariablen oder Fallback auf hartcodierte Werte
 const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'data.iwintra.net',
-  port: Number(process.env.DB_PORT) || 3306,
-  user: process.env.DB_USER || 'u1962_PSzSyNxsln',
-  password: process.env.DB_PASSWORD || 'PMAy.XOZuoMQVl=ocua5Hk.@',
+  host: 'db.pavl21.de',
+  port: 3306,
+  user: 'u1962_PSzSyNxsln',
+  password: 'diS.2n=jbGuR^4aJfKC7V.XS',
   database: process.env.DB_NAME || 's1962_cytooxien_wiki',
   waitForConnections: true,
   connectionLimit: 10,

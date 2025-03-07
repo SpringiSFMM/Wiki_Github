@@ -156,3 +156,41 @@ body {
 .glass {
   @apply bg-dark-900/90 backdrop-blur-lg border border-dark-800/50;
 }
+
+/* styles.css */
+.fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50; /* Ensure it's above other content */
+}
+
+.bg-dark-900 {
+  background-color: #1a1a1a; /* Dunkle Hintergrundfarbe */
+}
+
+.text-dark-200 {
+  color: #e0e0e0; /* Helle Textfarbe für Kontrast */
+}
+
+.p-4 {
+  padding: 1rem; /* Padding für den Banner */
+}
+
+.transition-all {
+  transition: all 0.3s ease; /* Sanfte Übergänge */
+}
+
+.shadow-md {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Schatten für Tiefe */
+}
+
+.rounded-b-xl {
+  border-bottom-left-radius: 1rem; /* Abgerundete Ecken */
+  border-bottom-right-radius: 1rem;
+}
+
+.hover\:shadow-lg:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Schatten beim Hover */
+}

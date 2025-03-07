@@ -84,7 +84,7 @@ export function Wiki() {
   });
 
   return (
-    <div className="max-w-7xl mx-auto p-4">
+    <div className="max-w-7xl mx-auto p-4 py-6">
       {/* Hero-Bereich mit Suchfeld */}
       <div className="relative overflow-hidden rounded-2xl mb-12">
         <div className="absolute inset-0 bg-gradient-to-br from-cyto-600/30 via-cyto-500/20 to-dark-900/90 transition-all duration-300"></div>
@@ -92,7 +92,7 @@ export function Wiki() {
         
         <div className="relative z-10 py-12 px-6 md:px-10 text-center">
           <h1 className={`text-3xl md:text-4xl font-bold ${isDarkMode ? 'text-cyto-400' : 'text-cyto-600'} mb-4 transition-all duration-300`}>Community-Wiki für Cytooxien</h1>
-          <p className={`text-dark-200 max-w-2xl mx-auto mb-8 transition-all duration-300 ${isDarkMode ? 'text-dark-200' : 'text-gray-600'}`}>
+          <p className={`max-w-2xl mx-auto mb-8 transition-all duration-300 ${isDarkMode ? 'text-dark-200' : 'text-gray-600'}`}>
             Entdecke alles über die Spielwelt, Mechaniken, Regeln und mehr in diesem von der Community erstellten Wiki.
           </p>
           

@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-quer
 import { Toaster } from 'react-hot-toast';
 import { Layout } from './components/Layout';
 import { MaintenanceMode } from './components/MaintenanceMode';
-import { useAuth } from './lib/auth';
+import { useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
 import axios from 'axios';
@@ -27,6 +27,7 @@ const ArticleEditor = lazy(() => import('./pages/admin/ArticleEditor').then(modu
 const Settings = lazy(() => import('./pages/admin/Settings').then(module => ({ default: module.Settings })));
 const Categories = lazy(() => import('./pages/admin/Categories').then(module => ({ default: module.Categories })));
 const Articles = lazy(() => import('./pages/admin/Articles').then(module => ({ default: module.Articles })));
+const Users = lazy(() => import('./pages/admin/Users').then(module => ({ default: module.Users })));
 const UpdatesManager = lazy(() => import('./pages/admin/UpdatesManager').then(module => ({ default: module.UpdatesManager })));
 const UpdateEditor = lazy(() => import('./pages/admin/UpdateEditor').then(module => ({ default: module.UpdateEditor })));
 
@@ -66,14 +67,15 @@ const queryClient = new QueryClient({
 });
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const auth = useAuth();
+  const location = useLocation();
 
-  if (isLoading) {
+  if (auth.isLoading) {
     return <LoadingFallback />;
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+  if (!auth.isAuthenticated) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   return <>{children}</>;
@@ -82,7 +84,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 function MaintenanceCheck({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
-  const { data: settings, isLoading, isError } = useQuery({
+  const { data: settings, isLoading: isSettingsLoading, isError } = useQuery({
     queryKey: ['settings'],
     queryFn: async () => {
       try {
@@ -95,23 +97,30 @@ function MaintenanceCheck({ children }: { children: React.ReactNode }) {
     },
   });
 
-  if (isLoading) return <LoadingFallback />;
+  if (isSettingsLoading) return <LoadingFallback />;
   
   if (isError) {
     console.error('Error fetching maintenance settings');
     return <>{children}</>;
   }
 
-  // Allow access to login page during maintenance
-  if (location.pathname === '/login') {
-    return <>{children}</>;
+  // Wenn der Maintenance-Modus aktiv ist
+  if (settings?.maintenanceMode) {
+    // Erlaube Zugriff auf die Login-Seite
+    if (location.pathname === '/login') {
+      return <>{children}</>;
+    }
+    
+    // Erlaube authentifizierten Benutzern Zugriff auf Admin-Seiten
+    if (isAuthenticated && location.pathname.startsWith('/admin')) {
+      return <>{children}</>;
+    }
+    
+    // Zeige die Maintenance-Seite für alle anderen Fälle
+    return <MaintenanceMode message={settings.maintenanceMessage || 'Wir führen gerade Wartungsarbeiten durch. Bitte versuchen Sie es später erneut.'} />;
   }
 
-  // Show maintenance page for non-authenticated users when maintenance mode is active
-  if (settings?.maintenanceMode && !isAuthenticated) {
-    return <MaintenanceMode message={settings.maintenanceMessage} />;
-  }
-
+  // Wenn der Maintenance-Modus nicht aktiv ist, zeige die normale Seite
   return <>{children}</>;
 }
 
@@ -162,6 +171,11 @@ function App() {
                       <Route path="categories" element={
                         <ProtectedRoute>
                           <Categories />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="users" element={
+                        <ProtectedRoute>
+                          <Users />
                         </ProtectedRoute>
                       } />
                       <Route path="settings" element={

@@ -51,7 +51,7 @@ const mockServerStatus: ServerStatusResponse = {
       { name: "Spieler2", id: "uuid2" }
     ]
   },
-  version: "1.20.4",
+  version: "1.21.4",
   protocol: 765,
   motd: {
     raw: ["Willkommen auf Cytooxien!"],

@@ -1,4 +1,4 @@
-import { pool } from './db';
+import { pool } from './db.ts';
 import bcrypt from 'bcryptjs';
 
 async function setupDatabase() {

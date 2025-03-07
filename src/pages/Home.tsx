@@ -110,7 +110,7 @@ export function Home() {
   });
 
   return (
-    <div className="space-y-12 max-w-6xl mx-auto px-4">
+    <div className="space-y-12 max-w-6xl mx-auto px-4 py-6">
       {/* Hero Section */}
       <section className={`relative overflow-hidden rounded-2xl ${isDarkMode ? 'bg-dark-900/70 border border-dark-700' : 'bg-white border border-slate-200 shadow-sm'} p-4 md:p-6`}>
         <div className="relative z-10 max-w-4xl mx-auto">

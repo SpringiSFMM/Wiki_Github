@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { pool } from './db';
+import { pool } from './db.ts';
 import dotenv from 'dotenv';
 
 // Lade Umgebungsvariablen
