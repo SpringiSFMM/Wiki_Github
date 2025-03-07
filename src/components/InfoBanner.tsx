@@ -33,22 +33,28 @@ const InfoBanner: React.FC<InfoBannerProps> = ({ onClose }) => {
     if (!visible) return null;
 
     return (
-        <div className="max-w-7xl mx-auto px-4 mt-4">
-            <div 
-                className={`${isDarkMode ? 'bg-dark-800 border-dark-700' : 'bg-cyto-50 border-cyto-200'} 
-                border text-${isDarkMode ? 'dark-200' : 'gray-800'} 
-                p-4 transition-all duration-300 shadow-md rounded-xl hover:shadow-lg 
-                relative flex items-center
-                ${isRendered ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform -translate-y-4'}`}
-            > 
-                <AlertCircle className={`h-5 w-5 mr-2 ${isDarkMode ? 'text-cyto-400' : 'text-cyto-600'} flex-shrink-0`} />
-                <span>Die Website ist aktuell in der ALPHA Phase. Bugs können auftreten und bitte melden!</span>
-                <button 
-                    onClick={handleClose} 
-                    className={`ml-auto pl-4 ${isDarkMode ? 'text-dark-400 hover:text-dark-200' : 'text-gray-500 hover:text-gray-800'} transition-colors duration-200 text-lg font-medium`}
-                >
-                    &times;
-                </button>
+        <div className="w-full bg-dark-950 py-2">
+            <div className="max-w-7xl mx-auto px-4">
+                <div 
+                    className={`
+                        ${isDarkMode ? 'bg-cyto-600/10 border-cyto-600/30' : 'bg-cyto-50 border-cyto-200'} 
+                        border text-cyto-400 p-2.5 transition-all duration-300 shadow-sm rounded-lg
+                        relative flex items-center
+                        ${isRendered ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform -translate-y-4'}
+                    `}
+                > 
+                    <div className="flex items-center justify-center mr-2 text-cyto-400">
+                        <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                    </div>
+                    <span className="text-sm">Die Website ist aktuell in der ALPHA Phase. Bugs können auftreten und bitte melden!</span>
+                    <button 
+                        onClick={handleClose} 
+                        className="ml-auto text-cyto-400/70 hover:text-cyto-400 transition-colors duration-200"
+                        aria-label="Banner schließen"
+                    >
+                        <span className="font-medium">&times;</span>
+                    </button>
+                </div>
             </div>
         </div>
     );
