@@ -1,49 +1,106 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, Outlet } from 'react-router-dom';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 import { Layout } from './components/Layout';
-import { AdminLayout } from './components/AdminLayout';
-import { Home } from './pages/Home';
-import { Wiki } from './pages/Wiki';
-import { WikiCategory } from './pages/WikiCategory';
-import { WikiArticle } from './pages/WikiArticle';
-import { FWSites } from './pages/FWSites';
-import { UpdateDetail } from './pages/UpdateDetail';
-import { Dashboard } from './pages/admin/Dashboard';
-import { ArticleEditor } from './pages/admin/ArticleEditor';
-import { Settings } from './pages/admin/Settings';
-import { Categories } from './pages/admin/Categories';
-import { Articles } from './pages/admin/Articles';
-import { UpdatesManager } from './pages/admin/UpdatesManager';
-import { UpdateEditor } from './pages/admin/UpdateEditor';
-import { Login } from './pages/Login';
-import { AuthGuard } from './components/AuthGuard';
 import { MaintenanceMode } from './components/MaintenanceMode';
 import { useAuth } from './lib/auth';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { AuthProvider } from './contexts/AuthContext';
 import axios from 'axios';
+
+// Lazy-loaded components
+const Home = lazy(() => import('./pages/Home').then(module => ({ default: module.Home })));
+const Wiki = lazy(() => import('./pages/Wiki').then(module => ({ default: module.Wiki })));
+const WikiCategory = lazy(() => import('./pages/WikiCategory').then(module => ({ default: module.WikiCategory })));
+const WikiArticle = lazy(() => import('./pages/WikiArticle').then(module => ({ default: module.WikiArticle })));
+const FWSites = lazy(() => import('./pages/FWSites').then(module => ({ default: module.FWSites })));
+const UpdateDetail = lazy(() => import('./pages/UpdateDetail').then(module => ({ default: module.UpdateDetail })));
+const Contact = lazy(() => import('./pages/Contact').then(module => ({ default: module.Contact })));
+const Login = lazy(() => import('./pages/Login').then(module => ({ default: module.Login })));
+const Imprint = lazy(() => import('./pages/Imprint').then(module => ({ default: module.Imprint })));
+const Impressum = lazy(() => import('./pages/Impressum').then(module => ({ default: module.Impressum })));
+
+// Admin components
+const Dashboard = lazy(() => import('./pages/admin/Dashboard').then(module => ({ default: module.Dashboard })));
+const ArticleEditor = lazy(() => import('./pages/admin/ArticleEditor').then(module => ({ default: module.ArticleEditor })));
+const Settings = lazy(() => import('./pages/admin/Settings').then(module => ({ default: module.Settings })));
+const Categories = lazy(() => import('./pages/admin/Categories').then(module => ({ default: module.Categories })));
+const Articles = lazy(() => import('./pages/admin/Articles').then(module => ({ default: module.Articles })));
+const UpdatesManager = lazy(() => import('./pages/admin/UpdatesManager').then(module => ({ default: module.UpdatesManager })));
+const UpdateEditor = lazy(() => import('./pages/admin/UpdateEditor').then(module => ({ default: module.UpdateEditor })));
+
+// Loading-Komponente für Suspense
+const LoadingFallback = () => {
+  const [isVisible, setIsVisible] = useState(true);
+  
+  useEffect(() => {
+    // Zeige den Loader für mindestens 3 Sekunden an
+    const timer = setTimeout(() => {
+      setIsVisible(false);
+    }, 3000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
+  if (!isVisible) return null;
+  
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-dark-900">
+      <div className="text-center">
+        <div className="w-16 h-16 border-4 border-cyto-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+        <p className="mt-4 text-cyto-400">Lade Inhalte...</p>
+      </div>
+    </div>
+  );
+};
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
       refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000, // 5 Minuten Cache
     },
   },
 });
 
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return <LoadingFallback />;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+
+  return <>{children}</>;
+}
+
 function MaintenanceCheck({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
-  const { data: settings, isLoading } = useQuery({
+  const { data: settings, isLoading, isError } = useQuery({
     queryKey: ['settings'],
     queryFn: async () => {
-      const response = await axios.get('/api/settings');
-      return response.data;
+      try {
+        const response = await axios.get('/api/settings');
+        return response.data;
+      } catch (error) {
+        console.error('Failed to fetch maintenance settings:', error);
+        return { maintenanceMode: false };
+      }
     },
   });
 
-  if (isLoading) return null;
+  if (isLoading) return <LoadingFallback />;
+  
+  if (isError) {
+    console.error('Error fetching maintenance settings');
+    return <>{children}</>;
+  }
 
   // Allow access to login page during maintenance
   if (location.pathname === '/login') {
@@ -60,122 +117,83 @@ function MaintenanceCheck({ children }: { children: React.ReactNode }) {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <MaintenanceCheck>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Home />} />
-              <Route path="/wiki" element={<Wiki />} />
-              <Route path="/wiki/category/:category" element={<WikiCategory />} />
-              <Route path="/wiki/:category/:article" element={<WikiArticle />} />
-              <Route path="/fwsites" element={<FWSites />} />
-              <Route path="/updates/:id" element={<UpdateDetail />} />
-            </Route>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <BrowserRouter>
+            <MaintenanceCheck>
+              <Suspense fallback={<LoadingFallback />}>
+                <Routes>
+                  <Route element={<Layout />}>
+                    {/* Public Routes */}
+                    <Route index element={<Home />} />
+                    <Route path="wiki" element={<Wiki />} />
+                    <Route path="wiki/category/:category" element={<WikiCategory />} />
+                    <Route path="wiki/:category/:article" element={<WikiArticle />} />
+                    <Route path="fwsites" element={<FWSites />} />
+                    <Route path="updates/:id" element={<UpdateDetail />} />
+                    <Route path="contact" element={<Contact />} />
+                    <Route path="imprint" element={<Imprint />} />
+                    <Route path="impressum" element={<Impressum />} />
+                    <Route path="login" element={<Login />} />
 
-            {/* Auth Routes */}
-            <Route path="/login" element={<Login />} />
-
-            {/* Admin Routes */}
-            <Route
-              path="/admin"
-              element={
-                <AuthGuard>
-                  <AdminLayout>
-                    <Dashboard />
-                  </AdminLayout>
-                </AuthGuard>
-              }
-            />
-            <Route
-              path="/admin/articles"
-              element={
-                <AuthGuard>
-                  <AdminLayout>
-                    <Articles />
-                  </AdminLayout>
-                </AuthGuard>
-              }
-            />
-            <Route
-              path="/admin/categories"
-              element={
-                <AuthGuard>
-                  <AdminLayout>
-                    <Categories />
-                  </AdminLayout>
-                </AuthGuard>
-              }
-            />
-            <Route
-              path="/admin/settings"
-              element={
-                <AuthGuard>
-                  <AdminLayout>
-                    <Settings />
-                  </AdminLayout>
-                </AuthGuard>
-              }
-            />
-            <Route
-              path="/admin/articles/new"
-              element={
-                <AuthGuard>
-                  <AdminLayout>
-                    <ArticleEditor />
-                  </AdminLayout>
-                </AuthGuard>
-              }
-            />
-            <Route
-              path="/admin/articles/:id/edit"
-              element={
-                <AuthGuard>
-                  <AdminLayout>
-                    <ArticleEditor />
-                  </AdminLayout>
-                </AuthGuard>
-              }
-            />
-            <Route
-              path="/admin/updates"
-              element={
-                <AuthGuard>
-                  <AdminLayout>
-                    <UpdatesManager />
-                  </AdminLayout>
-                </AuthGuard>
-              }
-            />
-            <Route
-              path="/admin/updates/new"
-              element={
-                <AuthGuard>
-                  <AdminLayout>
-                    <UpdateEditor />
-                  </AdminLayout>
-                </AuthGuard>
-              }
-            />
-            <Route
-              path="/admin/updates/:id"
-              element={
-                <AuthGuard>
-                  <AdminLayout>
-                    <UpdateEditor />
-                  </AdminLayout>
-                </AuthGuard>
-              }
-            />
-
-            {/* Fallback */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </MaintenanceCheck>
-        <Toaster position="top-right" />
-      </BrowserRouter>
-    </QueryClientProvider>
+                    {/* Protected Admin Routes */}
+                    <Route path="admin">
+                      <Route index element={
+                        <ProtectedRoute>
+                          <Dashboard />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="articles" element={
+                        <ProtectedRoute>
+                          <Articles />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="articles/new" element={
+                        <ProtectedRoute>
+                          <ArticleEditor />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="articles/:id" element={
+                        <ProtectedRoute>
+                          <ArticleEditor />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="categories" element={
+                        <ProtectedRoute>
+                          <Categories />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="settings" element={
+                        <ProtectedRoute>
+                          <Settings />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="updates" element={
+                        <ProtectedRoute>
+                          <UpdatesManager />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="updates/new" element={
+                        <ProtectedRoute>
+                          <UpdateEditor />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="updates/:id" element={
+                        <ProtectedRoute>
+                          <UpdateEditor />
+                        </ProtectedRoute>
+                      } />
+                    </Route>
+                  </Route>
+                </Routes>
+              </Suspense>
+            </MaintenanceCheck>
+            <Toaster position="bottom-right" />
+          </BrowserRouter>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </AuthProvider>
   );
 }
 

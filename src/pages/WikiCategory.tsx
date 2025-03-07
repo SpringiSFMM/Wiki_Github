@@ -49,9 +49,9 @@ export function WikiCategory() {
   }
 
   return (
-    <div className="min-h-screen bg-dark-950">
+    <div className="min-h-screen bg-white dark:bg-dark-950">
       {/* Breadcrumb */}
-      <div className="bg-dark-900 border-b border-dark-800">
+      <div className="bg-gray-50 dark:bg-dark-900 border-b border-gray-200 dark:border-dark-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center space-x-2 text-sm text-dark-300">
             <Link to="/wiki" className="hover:text-neon-400">
@@ -65,20 +65,20 @@ export function WikiCategory() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-neon-400 mb-4 capitalize">
-            {category} Articles
+          <h1 className="text-3xl font-bold text-cyto-600 dark:text-neon-400 mb-4 capitalize">
+            {category} Artikel
           </h1>
-          <p className="text-dark-200">
-            Browse all articles in the {category} category
+          <p className="text-gray-600 dark:text-dark-200">
+            Durchsuche alle Artikel in der Kategorie {category}
           </p>
         </div>
 
-        <div className="grid gap-6">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {articles?.map((article) => (
             <Link
               key={article.id}
               to={`/wiki/${article.category.toLowerCase()}/${article.id}`}
-              className="bg-dark-900 rounded-xl p-6 border border-dark-800 hover:border-neon-500/50 transition-colors"
+              className="bg-white dark:bg-dark-900 rounded-xl p-6 border border-gray-200 dark:border-dark-800 hover:border-cyto-500/50 dark:hover:border-neon-500/50 transition-colors"
             >
               <h2 className="text-xl font-semibold text-neon-400 mb-2">
                 {article.title}

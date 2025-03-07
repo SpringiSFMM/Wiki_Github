@@ -1,233 +1,256 @@
-import React from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Search, Menu, X, Home, Sprout, Users, ExternalLink, ChevronDown } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, Outlet } from 'react-router-dom';
+import { Menu, X, ChevronDown, Sun, Moon, User, LogOut, Book, Home, Server as ServerIcon, Mail, Settings, Users, FolderOpen } from 'lucide-react';
+import { ServerStatus } from './ServerStatus';
+import { ThemeToggle } from './ThemeToggle';
+import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 
 export function Layout() {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const [isSearchOpen, setIsSearchOpen] = React.useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const { isDarkMode } = useTheme();
   const location = useLocation();
-
-  const mainNavItems = [
-    { icon: <Home size={20} />, label: 'Home', path: '/' },
-    { icon: <Sprout size={20} />, label: 'Wiki', path: '/wiki' },
-    { icon: <Users size={20} />, label: 'FWSites', path: '/fwsites' },
+  const { isAuthenticated, logout } = useAuth();
+  
+  // Player count query
+  const { data: playerCount } = useQuery({
+    queryKey: ['playerCount'],
+    queryFn: async () => {
+      try {
+        const response = await axios.get('/api/player-count');
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching player count:', error);
+        return { online: 0, max: 0, percentage: 0 };
+      }
+    },
+    refetchInterval: 60000, // Refresh every minute
+  });
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+  
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location]);
+  
+  const navLinks = [
+    { name: 'Startseite', path: '/', icon: <Home className="h-5 w-5" /> },
+    { name: 'Wiki', path: '/wiki', icon: <Book className="h-5 w-5" /> },
+    { name: 'FW-Sites', path: '/fwsites', icon: <ServerIcon className="h-5 w-5" /> },
+    { name: 'Kontakt', path: '/contact', icon: <Mail className="h-5 w-5" /> },
   ];
 
-  return (
-    <div className="min-h-screen bg-dark-950">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <Link to="/" className="flex-shrink-0">
-                <h1 className="text-2xl font-bold text-neon-400">Cactus Tycoon</h1>
-              </Link>
-            </div>
+  const adminLinks = [
+    { name: 'Dashboard', path: '/admin', icon: <Home className="h-5 w-5" /> },
+    { name: 'Artikel', path: '/admin/articles', icon: <Book className="h-5 w-5" /> },
+    { name: 'Kategorien', path: '/admin/categories', icon: <FolderOpen className="h-5 w-5" /> },
+    { name: 'Einstellungen', path: '/admin/settings', icon: <Settings className="h-5 w-5" /> },
+  ];
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex md:items-center md:space-x-6">
-              {mainNavItems.map((item) => (
+  const isAdminRoute = location.pathname.startsWith('/admin');
+  const activeLinks = isAdminRoute ? adminLinks : navLinks;
+
+  return (
+    <div className={`min-h-screen bg-${isDarkMode ? 'dark-950' : 'white'} text-${isDarkMode ? 'dark-200' : 'dark-900'} flex flex-col`}>
+      <header 
+        className={`sticky top-0 z-50 transition-all duration-300 ${
+          isScrolled 
+            ? `bg-${isDarkMode ? 'dark-900/80' : 'white'} backdrop-blur-md shadow-md shadow-${isDarkMode ? 'dark-950/20' : 'dark-200/20'}` 
+            : 'bg-transparent'
+        }`}
+      >
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            <Link to="/" className="flex items-center space-x-2 group">
+              <div className={`h-8 w-8 bg-gradient-to-br from-cyto-500 to-cyto-700 rounded-lg flex items-center justify-center shadow-md shadow-cyto-600/10 group-hover:shadow-lg group-hover:shadow-cyto-600/20 transition-all duration-300 transform group-hover:scale-105`}>
+                <img src="/images/logo.png" alt="Cytooxien Logo" className="h-5 w-5" />
+              </div>
+              <span className={`font-bold text-lg text-${isDarkMode ? 'white' : 'dark-900'}`}>
+                {isAdminRoute ? 'Admin Panel' : 'Cytooxien'}
+              </span>
+            </Link>
+            
+            <nav className="hidden md:flex items-center space-x-1">
+              {activeLinks.map((link) => (
                 <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    location.pathname === item.path
-                      ? 'text-neon-400 bg-dark-800'
-                      : 'text-dark-100 hover:text-neon-400 hover:bg-dark-800'
+                  key={link.path}
+                  to={link.path}
+                  className={`inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300
+                    ${isDarkMode 
+                      ? 'text-dark-200 hover:text-cyto-400 hover:bg-dark-800' 
+                      : 'text-dark-900 hover:text-cyto-600 hover:bg-dark-200'} ${
+                    location.pathname === link.path
+                      ? `bg-cyto-600/10 text-cyto-400`
+                      : ''
                   }`}
                 >
-                  {item.icon}
-                  <span>{item.label}</span>
+                  {React.cloneElement(link.icon, { 
+                    className: `h-4 w-4 ${location.pathname === link.path ? 'text-cyto-400' : `text-${isDarkMode ? 'dark-300' : 'dark-500'}`}` 
+                  })}
+                  <span className="ml-2">{link.name}</span>
                 </Link>
               ))}
+            </nav>
+            
+            <div className="hidden md:flex items-center space-x-4">
+              <ThemeToggle variant="icon" />
               
-              <button
-                onClick={() => setIsSearchOpen(true)}
-                className="px-3 py-2 rounded-lg text-dark-100 hover:text-neon-400 hover:bg-dark-800"
-              >
-                <Search size={20} />
-              </button>
-
-              <a
-                href="https://play.cytooxien.de"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center space-x-2 px-4 py-2 bg-neon-600 text-dark-950 rounded-lg hover:bg-neon-500 transition-colors font-semibold"
-              >
-                <span>Play Now</span>
-                <ExternalLink size={16} />
-              </a>
+              {isAuthenticated ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                    className={`flex items-center space-x-2 p-2 rounded-lg hover:bg-${isDarkMode ? 'dark-800/70' : 'dark-200/70'} transition-all duration-300`}
+                  >
+                    <div className={`h-8 w-8 bg-gradient-to-br from-cyto-600 to-cyto-700 rounded-full flex items-center justify-center text-${isDarkMode ? 'white' : 'dark-900'}`}>
+                      <User className="h-4 w-4" />
+                    </div>
+                    <span className={`text-${isDarkMode ? 'dark-200' : 'dark-900'}`}>Admin</span>
+                    <ChevronDown className={`h-4 w-4 text-${isDarkMode ? 'dark-400' : 'dark-500'} transition-transform duration-300 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  {isUserMenuOpen && (
+                    <div className={`absolute right-0 mt-2 w-48 bg-${isDarkMode ? 'dark-900/95' : 'white'} backdrop-blur-sm border border-${isDarkMode ? 'dark-800/50' : 'dark-200/50'} rounded-xl shadow-xl shadow-${isDarkMode ? 'dark-950/20' : 'dark-200/20'} py-2 z-50`}>
+                      {!isAdminRoute && (
+                        <Link
+                          to="/admin"
+                          className={`block px-4 py-2 text-${isDarkMode ? 'dark-200' : 'dark-900'} hover:bg-${isDarkMode ? 'dark-800/70' : 'dark-200/70'} hover:text-${isDarkMode ? 'dark-100' : 'dark-900'} transition-colors duration-300 flex items-center`}
+                        >
+                          <Settings className={`h-4 w-4 mr-2 text-${isDarkMode ? 'dark-400' : 'dark-500'}`} />
+                          Admin Panel
+                        </Link>
+                      )}
+                      {isAdminRoute && (
+                        <Link
+                          to="/"
+                          className={`block px-4 py-2 text-${isDarkMode ? 'dark-200' : 'dark-900'} hover:bg-${isDarkMode ? 'dark-800/70' : 'dark-200/70'} hover:text-${isDarkMode ? 'dark-100' : 'dark-900'} transition-colors duration-300 flex items-center`}
+                        >
+                          <Home className={`h-4 w-4 mr-2 text-${isDarkMode ? 'dark-400' : 'dark-500'}`} />
+                          Zur Website
+                        </Link>
+                      )}
+                      <button
+                        onClick={() => {
+                          logout();
+                          window.location.href = '/login';
+                        }}
+                        className={`w-full text-left px-4 py-2 text-${isDarkMode ? 'dark-200' : 'dark-900'} hover:bg-${isDarkMode ? 'dark-800/70' : 'dark-200/70'} hover:text-${isDarkMode ? 'dark-100' : 'dark-900'} transition-colors duration-300 flex items-center`}
+                      >
+                        <LogOut className={`h-4 w-4 mr-2 text-${isDarkMode ? 'dark-400' : 'dark-500'}`} />
+                        Abmelden
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  to="/login"
+                  className="relative px-4 py-2 rounded-lg overflow-hidden group"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyto-600 to-cyto-700 transition-transform duration-300 group-hover:scale-105"></div>
+                  <div className="absolute inset-0 opacity-0 bg-gradient-to-r from-cyto-500 to-cyto-600 transition-opacity duration-300 group-hover:opacity-100"></div>
+                  <span className="relative z-10 text-white font-medium">Anmelden</span>
+                </Link>
+              )}
             </div>
-
-            {/* Mobile menu button */}
-            <div className="md:hidden">
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="inline-flex items-center justify-center p-2 rounded-lg text-dark-100 hover:text-neon-400 hover:bg-dark-800 focus:outline-none"
-              >
-                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
-            </div>
+            
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className={`md:hidden p-2 rounded-lg bg-${isDarkMode ? 'dark-800/50' : 'dark-200/50'} hover:bg-${isDarkMode ? 'dark-800' : 'dark-200'} text-${isDarkMode ? 'dark-300' : 'dark-500'} hover:text-${isDarkMode ? 'dark-100' : 'dark-900'} transition-all duration-300`}
+            >
+              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
           </div>
         </div>
-
-        {/* Mobile Navigation */}
+        
         {isMenuOpen && (
-          <div className="md:hidden border-t border-dark-800 bg-dark-900/95 backdrop-blur-sm">
-            <div className="px-4 py-3 space-y-3">
-              {mainNavItems.map((item) => (
+          <div className={`md:hidden bg-${isDarkMode ? 'dark-900/95' : 'white'} backdrop-blur-sm border-t border-${isDarkMode ? 'dark-800/50' : 'dark-200/50'} shadow-lg shadow-${isDarkMode ? 'dark-950/10' : 'dark-200/10'}`}>
+            <div className="container mx-auto px-4 py-3 space-y-2">
+              {activeLinks.map((link) => (
                 <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-base font-medium ${
-                    location.pathname === item.path
-                      ? 'text-neon-400 bg-dark-800'
-                      : 'text-dark-100 hover:text-neon-400 hover:bg-dark-800'
+                  key={link.path}
+                  to={link.path}
+                  className={`block px-3 py-2 rounded-lg flex items-center space-x-2 transition-all duration-300
+                    ${isDarkMode 
+                      ? 'text-dark-200 hover:text-cyto-400 hover:bg-dark-800' 
+                      : 'text-dark-900 hover:text-cyto-600 hover:bg-dark-200'} ${
+                    location.pathname === link.path
+                      ? 'bg-cyto-600/10 text-cyto-400'
+                      : ''
                   }`}
-                  onClick={() => setIsMenuOpen(false)}
                 >
-                  {item.icon}
-                  <span>{item.label}</span>
+                  {React.cloneElement(link.icon, { 
+                    className: `h-5 w-5 ${location.pathname === link.path ? 'text-cyto-400' : `text-${isDarkMode ? 'dark-300' : 'dark-500'}`}` 
+                  })}
+                  <span>{link.name}</span>
                 </Link>
               ))}
               
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search wiki..."
-                  className="w-full px-4 py-2 bg-dark-800 text-dark-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-neon-500 placeholder-dark-400"
-                />
-                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-dark-400" size={20} />
+              <div className="pt-2 border-t border-${isDarkMode ? 'dark-800/50' : 'dark-200/50'} mt-2 flex items-center justify-between">
+                <ThemeToggle variant="button" />
+                
+                {isAuthenticated ? (
+                  <button
+                    onClick={() => {
+                      logout();
+                      window.location.href = '/login';
+                    }}
+                    className={`px-3 py-2 rounded-lg flex items-center space-x-2 text-${isDarkMode ? 'dark-200' : 'dark-900'} hover:bg-${isDarkMode ? 'dark-800/70' : 'dark-200/70'} hover:text-${isDarkMode ? 'dark-100' : 'dark-900'} transition-colors duration-300`}
+                  >
+                    <LogOut className="h-5 w-5" />
+                    <span>Abmelden</span>
+                  </button>
+                ) : (
+                  <Link
+                    to="/login"
+                    className={`px-3 py-2 rounded-lg flex items-center space-x-2 text-${isDarkMode ? 'dark-200' : 'dark-900'} hover:bg-${isDarkMode ? 'dark-800/70' : 'dark-200/70'} hover:text-${isDarkMode ? 'dark-100' : 'dark-900'} transition-colors duration-300`}
+                  >
+                    <User className="h-5 w-5" />
+                    <span>Anmelden</span>
+                  </Link>
+                )}
               </div>
-              <a
-                href="https://play.cytooxien.de"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center space-x-2 px-4 py-2 bg-neon-600 text-dark-950 rounded-lg hover:bg-neon-500 transition-colors font-semibold"
-              >
-                <span>Play Now</span>
-                <ExternalLink size={16} />
-              </a>
             </div>
           </div>
         )}
-      </nav>
+      </header>
 
-      {/* Search Modal */}
-      {isSearchOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div
-              className="fixed inset-0 transition-opacity"
-              onClick={() => setIsSearchOpen(false)}
-            >
-              <div className="absolute inset-0 bg-dark-950 opacity-75"></div>
-            </div>
-            <div className="inline-block align-bottom bg-dark-900 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-dark-800">
-              <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search wiki..."
-                    className="w-full px-4 py-3 text-dark-100 rounded-lg bg-dark-800 focus:outline-none focus:ring-2 focus:ring-neon-500 placeholder-dark-400"
-                    autoFocus
-                  />
-                  <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-dark-400" size={20} />
-                </div>
-                <div className="mt-4">
-                  <h3 className="text-sm font-medium text-dark-300">Quick Links</h3>
-                  <div className="mt-2 grid grid-cols-2 gap-2">
-                    {[
-                      { title: 'Getting Started', path: '/wiki/getting-started' },
-                      { title: 'Farming Guide', path: '/wiki/farming' },
-                      { title: 'Server Rules', path: '/wiki/rules' },
-                      { title: 'Automation', path: '/wiki/automation' },
-                    ].map((link) => (
-                      <Link
-                        key={link.path}
-                        to={link.path}
-                        onClick={() => setIsSearchOpen(false)}
-                        className="p-2 rounded hover:bg-dark-800 text-dark-200 hover:text-neon-400"
-                      >
-                        {link.title}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Main Content */}
-      <main className="pt-16">
+      <main className="flex-grow">
         <Outlet />
       </main>
 
-      {/* Footer */}
-      <footer className="bg-dark-900 text-dark-100 mt-16 border-t border-dark-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="col-span-1 md:col-span-2">
-              <h2 className="text-2xl font-bold text-neon-400 mb-4">Cactus Tycoon</h2>
-              <p className="text-dark-300 mb-4">
-                Join our Minecraft community and become the ultimate cactus farmer. Experience unique gameplay, events, and a friendly atmosphere.
-              </p>
-              <div className="flex space-x-4">
-                <a href="https://discord.gg/cytooxien" target="_blank" rel="noopener noreferrer" className="text-dark-300 hover:text-neon-400">
-                  Discord
-                </a>
-                <a href="https://twitter.com/cytooxien" target="_blank" rel="noopener noreferrer" className="text-dark-300 hover:text-neon-400">
-                  Twitter
-                </a>
+      <footer className={`bg-${isDarkMode ? 'dark-900' : 'white'} border-t border-${isDarkMode ? 'dark-800' : 'dark-200'}`}>
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <div className="flex items-center space-x-4">
+              <Link to="/impressum" className={`text-sm text-${isDarkMode ? 'dark-400' : 'dark-500'} hover:text-${isDarkMode ? 'dark-200' : 'dark-700'} transition-colors duration-300`}>
+                Impressum
+              </Link>
+              
+              {/* Player Count */}
+              <div className={`flex items-center text-sm ${isDarkMode ? 'text-dark-400' : 'text-dark-500'}`}>
+                <Users className="h-4 w-4 mr-1.5" />
+                <span className={`font-medium ${isDarkMode ? 'text-cyto-400' : 'text-cyto-600'}`}>
+                  {playerCount?.online || 0}
+                </span>
+                <span className="mx-1">/</span>
+                <span>{playerCount?.max || 0}</span>
+                <span className="ml-1.5">Spieler online</span>
               </div>
             </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4 text-dark-100">Wiki</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link to="/wiki/getting-started" className="text-dark-300 hover:text-neon-400">
-                    Getting Started
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/wiki/guides" className="text-dark-300 hover:text-neon-400">
-                    Guides
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/wiki/rules" className="text-dark-300 hover:text-neon-400">
-                    Rules
-                  </Link>
-                </li>
-              </ul>
+            <div className={`text-sm text-${isDarkMode ? 'dark-400' : 'dark-500'}`}>
+              &copy; {new Date().getFullYear()} Alle Rechte vorbehalten.
             </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4 text-dark-100">Server</h3>
-              <ul className="space-y-2">
-                <li>
-                  <p className="text-dark-300">IP: play.cytooxien.de</p>
-                </li>
-                <li>
-                  <p className="text-dark-300">Version: 1.20.4</p>
-                </li>
-                <li>
-                  <Link to="/status" className="text-dark-300 hover:text-neon-400">
-                    Server Status
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="mt-8 pt-8 border-t border-dark-800">
-            <p className="text-center text-dark-400">
-              &copy; {new Date().getFullYear()} Cactus Tycoon. All rights reserved.
-            </p>
-            <p className="text-center text-dark-400 mt-2">
-              Diese Wiki-Seite wurde von einem Community-Mitglied erstellt und stammt nicht offiziell von Cytooxien.
-            </p>
           </div>
         </div>
       </footer>

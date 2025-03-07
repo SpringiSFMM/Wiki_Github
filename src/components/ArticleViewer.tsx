@@ -50,23 +50,23 @@ export function ArticleViewer({ article, isLoading }: ArticleViewerProps) {
   }
 
   return (
-    <div className="min-h-screen bg-dark-950">
+    <div className="min-h-screen bg-white dark:bg-dark-950">
       {/* Breadcrumb */}
-      <div className="bg-dark-900 border-b border-dark-800">
+      <div className="bg-gray-50 dark:bg-dark-900 border-b border-gray-200 dark:border-dark-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center space-x-2 text-sm text-dark-300">
-            <Link to="/wiki" className="hover:text-neon-400">
+          <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-dark-300">
+            <Link to="/wiki" className="hover:text-cyto-600 dark:hover:text-neon-400">
               Wiki
             </Link>
             <ChevronRight className="h-4 w-4" />
             <Link
               to={`/wiki/category/${article.category.toLowerCase()}`}
-              className="hover:text-neon-400 capitalize"
+              className="hover:text-cyto-600 dark:hover:text-neon-400 capitalize"
             >
               {article.category}
             </Link>
             <ChevronRight className="h-4 w-4" />
-            <span className="text-neon-400 truncate">{article.title}</span>
+            <span className="text-cyto-600 dark:text-neon-400 truncate">{article.title}</span>
           </div>
         </div>
       </div>
@@ -75,12 +75,12 @@ export function ArticleViewer({ article, isLoading }: ArticleViewerProps) {
         <div className="flex gap-8">
           {/* Main Content */}
           <div className="flex-1 max-w-4xl mx-auto">
-            <article className="bg-dark-900 rounded-xl border border-dark-800 p-8">
+            <article className="bg-white dark:bg-dark-900 rounded-xl border border-gray-200 dark:border-dark-800 p-8">
               <header className="mb-8">
-                <h1 className="text-4xl font-bold text-neon-400 mb-4">
+                <h1 className="text-4xl font-bold text-cyto-600 dark:text-neon-400 mb-4">
                   {article.title}
                 </h1>
-                <div className="flex items-center space-x-4 text-dark-300">
+                <div className="flex items-center space-x-4 text-gray-600 dark:text-dark-300">
                   <div className="flex items-center">
                     <User className="h-4 w-4 mr-2" />
                     <span>{article.author}</span>
@@ -88,18 +88,17 @@ export function ArticleViewer({ article, isLoading }: ArticleViewerProps) {
                   <div className="flex items-center">
                     <Clock className="h-4 w-4 mr-2" />
                     <span>
-                      Last updated: {format(new Date(article.lastModified), 'MMM d, yyyy')}
+                      Zuletzt aktualisiert: {format(new Date(article.lastModified), 'MMM d, yyyy')}
                     </span>
                   </div>
                 </div>
               </header>
 
-              <div className="prose prose-invert prose-green max-w-none text-white">
+              <div className="prose prose-cyto dark:prose-invert max-w-none text-gray-800 dark:text-white">
                 <div 
                   dangerouslySetInnerHTML={{ __html: article.content }} 
-                  className="text-white article-content"
+                  className="text-gray-800 dark:text-white article-content"
                   style={{ 
-                    color: 'white',
                     fontSize: '1rem',
                     lineHeight: '1.6'
                   }}
@@ -110,16 +109,16 @@ export function ArticleViewer({ article, isLoading }: ArticleViewerProps) {
             {/* Related Articles */}
             {article.relatedArticles && article.relatedArticles.length > 0 && (
               <div className="mt-8">
-                <h2 className="text-2xl font-bold text-neon-400 mb-4">Related Articles</h2>
+                <h2 className="text-2xl font-bold text-cyto-600 dark:text-neon-400 mb-4">Verwandte Artikel</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {article.relatedArticles.map((related) => (
                     <Link
                       key={related.id}
                       to={`/wiki/${related.category.toLowerCase()}/${related.id}`}
-                      className="p-4 bg-dark-900 rounded-lg border border-dark-800 hover:border-neon-500/50 transition-colors"
+                      className="p-4 bg-white dark:bg-dark-900 rounded-lg border border-gray-200 dark:border-dark-800 hover:border-cyto-500/50 dark:hover:border-neon-500/50 transition-colors"
                     >
-                      <h3 className="text-neon-400 font-medium mb-1">{related.title}</h3>
-                      <p className="text-sm text-dark-300 capitalize">{related.category}</p>
+                      <h3 className="text-cyto-600 dark:text-neon-400 font-medium mb-1">{related.title}</h3>
+                      <p className="text-sm text-gray-600 dark:text-dark-300 capitalize">{related.category}</p>
                     </Link>
                   ))}
                 </div>

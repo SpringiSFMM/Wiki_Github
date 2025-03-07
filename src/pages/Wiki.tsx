@@ -1,271 +1,289 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
-import { Sprout, Book, Shield, Crown, Users, Coins, Settings, Trophy, Search, Clock } from 'lucide-react';
-import { format } from 'date-fns';
+import React, { useState, useEffect } from 'react';
+import { Search, BookOpen, ChevronRight, Tag, Clock, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../contexts/ThemeContext';
 
-interface Article {
-  id: string;
-  title: string;
-  category: string;
-  status: 'published';
-  lastModified: string;
-  excerpt?: string;
-}
+// Mock-Daten für Kategorien
+const MOCK_CATEGORIES = [
+  { id: 1, name: 'Spielmechaniken', articleCount: 15, icon: '🎮', slug: 'spielmechaniken' },
+  { id: 2, name: 'Wirtschaft', articleCount: 8, icon: '💰', slug: 'wirtschaft' },
+  { id: 3, name: 'Regeln & Richtlinien', articleCount: 5, icon: '📜', slug: 'regeln-richtlinien' },
+  { id: 4, name: 'Befehle', articleCount: 12, icon: '⌨️', slug: 'befehle' },
+  { id: 5, name: 'Städte & Gebiete', articleCount: 9, icon: '🏙️', slug: 'staedte-gebiete' },
+  { id: 6, name: 'Events', articleCount: 6, icon: '🎉', slug: 'events' },
+];
 
-interface Category {
-  id: string;
-  name: string;
-  description: string;
-}
-
-const getCategoryIcon = (categoryName: string) => {
-  const icons: { [key: string]: React.ReactNode } = {
-    'getting-started': <Book className="h-6 w-6" />,
-    'farming': <Sprout className="h-6 w-6" />,
-    'economy': <Coins className="h-6 w-6" />,
-    'automation': <Settings className="h-6 w-6" />,
-    'ranks': <Crown className="h-6 w-6" />,
-    'competitions': <Trophy className="h-6 w-6" />,
-    'community': <Users className="h-6 w-6" />,
-    'rules': <Shield className="h-6 w-6" />,
-  };
-
-  return icons[categoryName.toLowerCase()] || <Book className="h-6 w-6" />;
-};
+// Mock-Daten für Artikel
+const MOCK_ARTICLES = [
+  { 
+    id: 1, 
+    title: 'Grundlagen des Wirtschaftssystems', 
+    category: 'Wirtschaft', 
+    lastUpdated: '2023-10-15', 
+    author: 'CytoAdmin', 
+    excerpt: 'Eine Einführung in das Wirtschaftssystem von Cytooxien, einschließlich Währung, Handel und Jobs.' 
+  },
+  { 
+    id: 2, 
+    title: 'PvP-Zonen und Kampfmechaniken', 
+    category: 'Spielmechaniken', 
+    lastUpdated: '2023-10-12', 
+    author: 'GameMaster', 
+    excerpt: 'Alles über die PvP-Mechaniken, Kampfzonen und spezielle Fähigkeiten im Kampf.' 
+  },
+  { 
+    id: 3, 
+    title: 'Serverregeln im Überblick', 
+    category: 'Regeln & Richtlinien', 
+    lastUpdated: '2023-10-10', 
+    author: 'ModeratorTim', 
+    excerpt: 'Eine vollständige Übersicht aller Serverregeln und Konsequenzen bei Verstößen.' 
+  },
+  { 
+    id: 4, 
+    title: 'Nützliche Befehle für Anfänger', 
+    category: 'Befehle', 
+    lastUpdated: '2023-10-08', 
+    author: 'HelperSarah', 
+    excerpt: 'Eine Liste der wichtigsten Befehle für neue Spieler auf dem Server.' 
+  },
+  { 
+    id: 5, 
+    title: 'Die Hauptstadt: Cytopia', 
+    category: 'Städte & Gebiete', 
+    lastUpdated: '2023-10-05', 
+    author: 'BuilderTeam', 
+    excerpt: 'Entdecke die Hauptstadt Cytopia mit allen wichtigen Orten und Funktionen.' 
+  },
+];
 
 export function Wiki() {
-  const [searchQuery, setSearchQuery] = React.useState('');
-  const [isFocused, setIsFocused] = React.useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [categories, setCategories] = useState(MOCK_CATEGORIES);
+  const [articles, setArticles] = useState(MOCK_ARTICLES);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const { isDarkMode } = useTheme();
 
-  // Fetch categories
-  const { data: categories = [] } = useQuery<Category[]>({
-    queryKey: ['categories'],
-    queryFn: async () => {
-      const response = await axios.get('/api/categories');
-      return response.data;
-    },
+  // Simuliere das Laden von Daten
+  useEffect(() => {
+    // In einer echten Anwendung würde hier eine API-Anfrage stehen
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+  }, []);
+
+  // Filtere Artikel basierend auf der Suche und Kategorie
+  const filteredArticles = articles.filter(article => {
+    const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          article.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory ? article.category === selectedCategory : true;
+    return matchesSearch && matchesCategory;
   });
-
-  // Fetch articles with error handling
-  const { data: articles, isError, error } = useQuery<Article[]>({
-    queryKey: ['articles'],
-    queryFn: async () => {
-      try {
-        const response = await axios.get('/api/articles');
-        return Array.isArray(response.data) ? response.data : [];
-      } catch (err) {
-        console.error('Error fetching articles:', err);
-        return [];
-      }
-    },
-    initialData: [],
-  });
-
-  // Filter articles based on search query
-  const filteredArticles = React.useMemo(() => {
-    if (!Array.isArray(articles)) return [];
-    return articles.filter(article => 
-      article?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      article?.category?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [articles, searchQuery]);
-
-  // Group articles by category
-  const articlesByCategory = React.useMemo(() => {
-    const grouped: Record<string, Article[]> = {};
-    if (Array.isArray(articles)) {
-      articles.forEach(article => {
-        if (!grouped[article.category]) {
-          grouped[article.category] = [];
-        }
-        grouped[article.category].push(article);
-      });
-    }
-    return grouped;
-  }, [articles]);
-
-  if (isError) {
-    return (
-      <div className="min-h-screen bg-dark-950 flex items-center justify-center">
-        <div className="text-dark-300">Error loading articles. Please try again later.</div>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen bg-dark-950">
-      {/* Hero Section with Search */}
-      <div className="relative bg-dark-900 border-b border-dark-800">
-        <div className="absolute inset-0 bg-gradient-to-b from-neon-500/5 to-transparent" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold text-neon-400 mb-4">
-              Cactus Tycoon Wiki
-            </h1>
-            <p className="text-xl text-dark-200 max-w-2xl mx-auto mb-6">
-              Your comprehensive guide to mastering Cactus Tycoon. Find detailed information,
-              strategies, and tips to become the ultimate cactus farmer.
-            </p>
-            
-            {/* Enhanced Search Bar */}
-            <div className="max-w-2xl mx-auto">
-              <div className={`relative group transition-all duration-300 ${
-                isFocused ? 'ring-2 ring-neon-500 ring-opacity-50' : ''
-              }`}>
-                <div className="absolute inset-0 bg-dark-800 rounded-xl opacity-50 group-hover:opacity-75 transition-opacity" />
-                <div className="absolute inset-0 bg-gradient-to-r from-neon-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-xl" />
-                <div className="relative flex items-center">
-                  <Search className={`absolute left-4 h-5 w-5 transition-colors duration-200 ${
-                    isFocused ? 'text-neon-400' : 'text-dark-400'
-                  }`} />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                    placeholder="Search articles..."
-                    className="w-full pl-12 pr-4 py-4 bg-transparent text-dark-100 rounded-xl border border-dark-700/50 focus:outline-none placeholder-dark-400 transition-colors"
-                  />
-                </div>
-              </div>
-              {searchQuery && (
-                <p className="mt-3 text-sm text-dark-400">
-                  Press Enter to search or start typing to see results
-                </p>
-              )}
+    <div className="max-w-7xl mx-auto p-4">
+      {/* Hero-Bereich mit Suchfeld */}
+      <div className="relative overflow-hidden rounded-2xl mb-12">
+        <div className="absolute inset-0 bg-gradient-to-br from-cyto-600/30 via-cyto-500/20 to-dark-900/90 transition-all duration-300"></div>
+        <div className="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-10"></div>
+        
+        <div className="relative z-10 py-12 px-6 md:px-10 text-center">
+          <h1 className={`text-3xl md:text-4xl font-bold ${isDarkMode ? 'text-cyto-400' : 'text-cyto-600'} mb-4 transition-all duration-300`}>Community-Wiki für Cytooxien</h1>
+          <p className={`text-dark-200 max-w-2xl mx-auto mb-8 transition-all duration-300 ${isDarkMode ? 'text-dark-200' : 'text-gray-600'}`}>
+            Entdecke alles über die Spielwelt, Mechaniken, Regeln und mehr in diesem von der Community erstellten Wiki.
+          </p>
+          
+          <div className="relative max-w-2xl mx-auto">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className={`h-5 w-5 ${isDarkMode ? 'text-dark-400' : 'text-gray-400'} transition-colors duration-300`} />
             </div>
+            <input
+              type="text"
+              className={`block w-full pl-10 pr-4 py-3 ${isDarkMode ? 'bg-dark-800/80' : 'bg-white'} backdrop-blur-sm border ${isDarkMode ? 'border-dark-700/50' : 'border-gray-200/50'} rounded-xl ${isDarkMode ? 'text-dark-200' : 'text-gray-600'} placeholder-${isDarkMode ? 'dark-400' : 'gray-400'} focus:outline-none focus:ring-2 focus:ring-cyto-500/50 focus:border-transparent transition-all duration-300`}
+              placeholder="Suche im Wiki..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          
+          <div className={`mt-4 text-${isDarkMode ? 'dark-400' : 'gray-400'} text-xs max-w-2xl mx-auto p-2 ${isDarkMode ? 'bg-dark-900/70' : 'bg-white'} rounded-lg border ${isDarkMode ? 'border-dark-800/30' : 'border-gray-200/30'} backdrop-blur-sm transition-all duration-300`}>
+            <p>Dieses Wiki wurde von einem Communitymitglied erstellt und wird von diesem betrieben. 
+            Es handelt sich um keine offizielle Seite von Cytooxien. Es findet keine Kooperation mit Cytooxien statt. 
+            Cytooxien haftet nicht und ist für diese Seite nicht verantwortlich.</p>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {searchQuery ? (
-          // Search Results
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-neon-400 mb-6">
-              Search Results
+      {/* Hauptinhalt */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Sidebar mit Kategorien */}
+        <div className="lg:col-span-4">
+          {/* Kategorien */}
+          <section className="mb-10 sticky top-20">
+            <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-cyto-400' : 'text-cyto-600'} mb-6`}>
+              Kategorien
             </h2>
-            {filteredArticles.length > 0 ? (
-              <div className="grid gap-6">
-                {filteredArticles.map((article) => (
-                  <Link
-                    key={article.id}
-                    to={`/wiki/${article.category.toLowerCase()}/${article.id}`}
-                    className="bg-dark-900 rounded-lg p-6 border border-dark-800 hover:border-neon-500/50 transition-colors"
-                  >
-                    <h3 className="text-xl font-semibold text-neon-400 mb-2">
-                      {article.title}
-                    </h3>
-                    <div className="flex items-center text-dark-300 text-sm">
-                      <Clock className="h-4 w-4 mr-2" />
-                      <span>
-                        Updated {format(new Date(article.lastModified), 'MMM d, yyyy')}
-                      </span>
-                      <span className="mx-2">•</span>
-                      <span className="capitalize">{article.category}</span>
+            <div className={`flex flex-col space-y-2 ${isDarkMode ? 'bg-dark-900/50' : 'bg-white'} p-3 rounded-xl border ${isDarkMode ? 'border-dark-700' : 'border-gray-200'} backdrop-blur-sm`}>
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => {
+                    setSelectedCategory(category.name);
+                    navigate(`/wiki/category/${category.slug}`);
+                  }}
+                  className={`group relative flex items-center px-4 py-3.5 rounded-lg border transition-all duration-300
+                    ${isDarkMode 
+                      ? 'bg-dark-800 hover:bg-dark-750 border-dark-700 hover:border-cyto-600/50 text-dark-200' 
+                      : 'bg-gray-50 hover:bg-white border-gray-200 hover:border-cyto-600/50 text-gray-700'}
+                    ${selectedCategory === category.name 
+                      ? (isDarkMode ? 'border-cyto-600 !bg-cyto-600/10' : 'border-cyto-600 !bg-cyto-600/5')
+                      : 'hover:shadow-lg hover:-translate-y-0.5'}`}
+                >
+                  <div className="flex items-center w-full">
+                    <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
+                      <span className="text-2xl">{category.icon}</span>
                     </div>
-                  </Link>
+                    <div className="flex-1 min-w-0">
+                      <h3 className={`font-medium text-base truncate transition-colors duration-300
+                        ${isDarkMode 
+                          ? 'text-dark-100 group-hover:text-white' 
+                          : 'text-gray-700 group-hover:text-black'}
+                        ${selectedCategory === category.name 
+                          ? (isDarkMode ? '!text-cyto-400' : '!text-cyto-600')
+                          : ''}`}>
+                        {category.name}
+                      </h3>
+                      <p className={`text-sm transition-colors duration-300
+                        ${isDarkMode ? 'text-dark-400' : 'text-gray-500'}
+                        ${selectedCategory === category.name 
+                          ? (isDarkMode ? '!text-cyto-400/70' : '!text-cyto-600/70')
+                          : ''}`}>
+                        {category.articleCount} Artikel
+                      </p>
+                    </div>
+                    <ChevronRight className={`h-5 w-5 flex-shrink-0 ml-4 transition-all duration-300
+                      ${isDarkMode 
+                        ? 'text-dark-400 group-hover:text-white' 
+                        : 'text-gray-400 group-hover:text-black'}
+                      ${selectedCategory === category.name 
+                        ? 'opacity-100 !text-cyto-400' 
+                        : 'opacity-0 group-hover:opacity-100'} 
+                      transform translate-x-2 group-hover:translate-x-0`}
+                    />
+                  </div>
+                </button>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        {/* Artikelliste */}
+        <div className="lg:col-span-8">
+          <div className={`rounded-xl border p-6 shadow-md transition-all duration-300
+            ${isDarkMode 
+              ? 'bg-dark-800 border-dark-700' 
+              : 'bg-white border-gray-200'}`}>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className={`text-xl font-semibold transition-colors duration-300
+                ${isDarkMode ? 'text-dark-100' : 'text-gray-900'}`}>
+                {selectedCategory ? selectedCategory : 'Alle Artikel'}
+              </h2>
+              <div className={`text-sm transition-colors duration-300
+                ${isDarkMode ? 'text-dark-400' : 'text-gray-500'}`}>
+                {filteredArticles.length} {filteredArticles.length === 1 ? 'Artikel' : 'Artikel'} gefunden
+              </div>
+            </div>
+
+            {isLoading ? (
+              <div className="space-y-4">
+                {[...Array(3)].map((_, index) => (
+                  <div key={index} className={`animate-pulse p-6 rounded-xl border transition-all duration-300
+                    ${isDarkMode 
+                      ? 'bg-dark-800/50 border-dark-700/50' 
+                      : 'bg-gray-50/50 border-gray-200/50'}`}>
+                    <div className={`h-6 rounded w-3/4 mb-3 ${isDarkMode ? 'bg-dark-700/50' : 'bg-gray-200/50'}`}></div>
+                    <div className={`h-4 rounded w-1/4 mb-2 ${isDarkMode ? 'bg-dark-700/50' : 'bg-gray-200/50'}`}></div>
+                    <div className={`h-4 rounded w-full ${isDarkMode ? 'bg-dark-700/50' : 'bg-gray-200/50'}`}></div>
+                    <div className={`h-4 rounded w-5/6 mt-1 ${isDarkMode ? 'bg-dark-700/50' : 'bg-gray-200/50'}`}></div>
+                  </div>
+                ))}
+              </div>
+            ) : filteredArticles.length > 0 ? (
+              <div className="space-y-4">
+                {filteredArticles.map((article) => (
+                  <div 
+                    key={article.id}
+                    className={`group p-5 rounded-xl border transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md transform hover:-translate-y-0.5
+                      ${isDarkMode 
+                        ? 'bg-dark-850/50 border-dark-700/50 hover:bg-dark-800/80 hover:border-cyto-600/30' 
+                        : 'bg-white border-gray-200/50 hover:bg-gray-50/80 hover:border-cyto-600/30'}`}
+                    onClick={() => navigate(`/wiki/${article.category.toLowerCase()}/${article.id}`)}
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <h3 className={`text-lg font-medium transition-colors duration-300
+                        ${isDarkMode 
+                          ? 'text-dark-100 group-hover:text-white' 
+                          : 'text-gray-700 group-hover:text-black'}`}>
+                        {article.title}
+                      </h3>
+                      <div className="flex items-center">
+                        <span className={`text-xs px-2 py-0.5 rounded-full flex items-center transition-colors duration-300
+                          ${isDarkMode 
+                            ? 'text-dark-400 bg-dark-800/80 group-hover:bg-cyto-600/10' 
+                            : 'text-gray-500 bg-gray-100/80 group-hover:bg-cyto-600/10'}`}>
+                          <Tag className={`h-3 w-3 mr-1 transition-colors duration-300
+                            ${isDarkMode 
+                              ? 'text-dark-400 group-hover:text-white' 
+                              : 'text-gray-400 group-hover:text-black'}`} />
+                          {article.category}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <p className={`text-sm mb-3 line-clamp-2 transition-colors duration-300
+                      ${isDarkMode ? 'text-dark-300' : 'text-gray-600'}`}>
+                      {article.excerpt}
+                    </p>
+                    
+                    <div className={`flex items-center justify-between text-xs transition-colors duration-300
+                      ${isDarkMode ? 'text-dark-400' : 'text-gray-500'}`}>
+                      <div className="flex items-center">
+                        <Clock className="h-3 w-3 mr-1" />
+                        <span>Aktualisiert am {article.lastUpdated}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <User className="h-3 w-3 mr-1" />
+                        <span>{article.author}</span>
+                      </div>
+                    </div>
+                    
+                    <div className={`mt-3 pt-2 flex justify-end opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 border-t
+                      ${isDarkMode ? 'border-dark-700/30' : 'border-gray-200/30'}`}>
+                      <span className={`text-sm flex items-center
+                        ${isDarkMode 
+                          ? 'text-cyto-400 group-hover:text-white' 
+                          : 'text-cyto-600 group-hover:text-black'}`}>
+                        Weiterlesen
+                        <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 transition-transform duration-300" />
+                      </span>
+                    </div>
+                  </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <p className="text-dark-300">No articles found matching your search.</p>
+              <div className="text-center py-10">
+                <BookOpen className={`h-12 w-12 mx-auto mb-4 ${isDarkMode ? 'text-dark-400' : 'text-gray-400'}`} />
+                <h3 className={`text-lg font-medium mb-2 ${isDarkMode ? 'text-dark-100' : 'text-gray-900'}`}>
+                  Keine Artikel gefunden
+                </h3>
+                <p className={isDarkMode ? 'text-dark-300' : 'text-gray-600'}>
+                  Versuche es mit einem anderen Suchbegriff oder wähle eine andere Kategorie.
+                </p>
               </div>
             )}
-          </div>
-        ) : (
-          // Categories Grid
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categories.map((category) => (
-              <div key={category.id} className="bg-dark-900 rounded-xl p-6 border border-dark-800">
-                <div className="flex items-center mb-4">
-                  <div className="p-3 bg-neon-500/10 rounded-lg mr-4">
-                    <div className="text-neon-400">
-                      {getCategoryIcon(category.name)}
-                    </div>
-                  </div>
-                  <h2 className="text-xl font-semibold text-neon-400">{category.name}</h2>
-                </div>
-                <p className="text-dark-300 mb-4">{category.description}</p>
-                <div className="space-y-2">
-                  {articlesByCategory[category.name]?.slice(0, 3).map((article) => {
-                    // Erstelle ein vollständiges Artikel-Objekt mit allen erforderlichen Eigenschaften
-                    const fullArticle = {
-                      id: article.id,
-                      title: article.title,
-                      // Behalte den ursprünglichen HTML-Inhalt bei
-                      content: article.excerpt || "Kein Inhalt verfügbar",
-                      category: article.category,
-                      author: "Unbekannt", // Wir haben keine Autor-Information in der Liste
-                      lastModified: article.lastModified,
-                      relatedArticles: [] // Wir haben keine verwandten Artikel in der Liste
-                    };
-                    
-                    return (
-                      <Link
-                        key={article.id}
-                        to={`/wiki/${article.category.toLowerCase()}/${article.id}`}
-                        className="block p-2 rounded hover:bg-dark-800 text-dark-200 hover:text-neon-400 transition-colors cursor-pointer flex items-center"
-                        onClick={(e) => {
-                          // Für Debugging-Zwecke
-                          console.log("Artikel geklickt:", fullArticle);
-                          console.log("Link:", `/wiki/${category.name.toLowerCase()}/${article.id}`);
-                        }}
-                      >
-                        <span className="mr-2">•</span>
-                        <span>{article.title}</span>
-                      </Link>
-                    );
-                  })}
-                  {articlesByCategory[category.name]?.length > 3 && (
-                    <Link
-                      to={`/wiki/category/${category.name.toLowerCase()}`}
-                      className="block text-neon-400 hover:text-neon-300 text-sm font-medium mt-2 p-2 hover:bg-dark-800 rounded transition-colors cursor-pointer"
-                    >
-                      View all articles →
-                    </Link>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Quick Links */}
-        <div className="mt-12 bg-dark-900 rounded-xl border border-dark-800 p-8">
-          <h2 className="text-2xl font-bold text-neon-400 mb-6">Popular Articles</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Jede Karte ist jetzt ein Link und vollständig klickbar */}
-            <Link
-              to="/wiki/getting-started/new-player-guide"
-              className="block p-4 rounded-lg bg-dark-800 hover:bg-dark-700 transition-colors group cursor-pointer"
-            >
-              <h3 className="text-neon-400 font-semibold mb-2 group-hover:text-neon-300">
-                New Player Guide
-              </h3>
-              <p className="text-dark-300">Everything you need to know to get started</p>
-            </Link>
-            <Link
-              to="/wiki/farming/farm-optimization"
-              className="block p-4 rounded-lg bg-dark-800 hover:bg-dark-700 transition-colors group cursor-pointer"
-            >
-              <h3 className="text-neon-400 font-semibold mb-2 group-hover:text-neon-300">
-                Farm Optimization
-              </h3>
-              <p className="text-dark-300">Tips and tricks for maximum efficiency</p>
-            </Link>
-            <Link
-              to="/wiki/automation/automation-basics"
-              className="block p-4 rounded-lg bg-dark-800 hover:bg-dark-700 transition-colors group cursor-pointer"
-            >
-              <h3 className="text-neon-400 font-semibold mb-2 group-hover:text-neon-300">
-                Automation Basics
-              </h3>
-              <p className="text-dark-300">Learn how to automate your farms</p>
-            </Link>
           </div>
         </div>
       </div>

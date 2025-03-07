@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Sprout, Coins, Trophy, Users, Settings, BookOpen, Crown, Shield, Clock, Info } from 'lucide-react';
+import { BookOpen, Coins, Trophy, Users, Settings, Server, Crown, Shield, Clock, Info, ArrowRight } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { format } from 'date-fns';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface Update {
   id: string;
@@ -15,33 +16,35 @@ interface Update {
 }
 
 export function Home() {
+  const { isDarkMode } = useTheme();
+  
   const features = [
     {
-      icon: <Sprout className="h-8 w-8" />,
-      title: 'Grow Cacti',
-      description: 'Master the art of cactus farming',
-      link: '/wiki/growing',
+      icon: <Server className="h-8 w-8" />,
+      title: 'Spielmodi',
+      description: 'Entdecke unsere verschiedenen Spielmodi',
+      link: '/wiki/spielmodi',
       bgImage: 'https://images.unsplash.com/photo-1509587584298-0f3b3a3a1797?auto=format&fit=crop&q=80'
     },
     {
       icon: <Coins className="h-8 w-8" />,
       title: 'Economy',
-      description: 'Trade and earn money',
+      description: 'Alles zum Wirtschaftssystem',
       link: '/wiki/economy',
       bgImage: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80'
     },
     {
       icon: <Trophy className="h-8 w-8" />,
-      title: 'Competitions',
-      description: 'Compete with other farmers',
-      link: '/wiki/competitions',
+      title: 'Events',
+      description: 'Regelmäßige Events und Wettbewerbe',
+      link: '/wiki/events',
       bgImage: 'https://images.unsplash.com/photo-1567942712661-82b9b407abbf?auto=format&fit=crop&q=80'
     },
     {
       icon: <Users className="h-8 w-8" />,
-      title: 'Multiplayer',
-      description: 'Play with friends',
-      link: '/wiki/multiplayer',
+      title: 'Community',
+      description: 'Werde Teil unserer Community',
+      link: '/wiki/community',
       bgImage: 'https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?auto=format&fit=crop&q=80'
     }
   ];
@@ -49,30 +52,30 @@ export function Home() {
   const guides = [
     {
       icon: <BookOpen className="h-6 w-6" />,
-      title: 'Beginner Guide',
-      description: 'Start your cactus empire',
+      title: 'Einsteiger-Guide',
+      description: 'Erste Schritte auf Cytooxien',
       link: '/wiki/guides',
       bgImage: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80'
     },
     {
       icon: <Settings className="h-6 w-6" />,
-      title: 'Automation',
-      description: 'Build efficient farms',
-      link: '/wiki/automation',
+      title: 'Befehle',
+      description: 'Wichtige Server-Befehle',
+      link: '/wiki/befehle',
       bgImage: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&q=80'
     },
     {
       icon: <Crown className="h-6 w-6" />,
-      title: 'Ranks',
-      description: 'Climb the farmer ranks',
-      link: '/wiki/ranks',
+      title: 'Ränge',
+      description: 'Verfügbare Ränge und Vorteile',
+      link: '/wiki/ränge',
       bgImage: 'https://images.unsplash.com/photo-1589988557744-7e25da0f3987?auto=format&fit=crop&q=80'
     },
     {
       icon: <Shield className="h-6 w-6" />,
-      title: 'Rules',
-      description: 'Server guidelines',
-      link: '/wiki/rules',
+      title: 'Regeln',
+      description: 'Server-Regeln und Richtlinien',
+      link: '/wiki/regeln',
       bgImage: 'https://images.unsplash.com/photo-1633613286848-e6f43bbafb8d?auto=format&fit=crop&q=80'
     }
   ];
@@ -107,134 +110,140 @@ export function Home() {
   });
 
   return (
-    <div className="space-y-16">
+    <div className="space-y-12 max-w-6xl mx-auto px-4">
       {/* Hero Section */}
-      <div className="relative h-[600px] -mt-16 mb-16">
-        <div className="absolute inset-0">
-          <img
-            src="https://images.unsplash.com/photo-1591251438125-8c0e944805d4?auto=format&fit=crop&q=80"
-            alt="Desert landscape with cacti"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-dark-900/95 via-dark-900/80 to-dark-900/70" />
-          <div className="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/80 to-transparent" />
-        </div>
-        <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
-          <div className="max-w-3xl">
-            <h1 className="text-6xl font-bold text-neon-400 mb-6 leading-tight">
-              Welcome to Cactus Tycoon
-            </h1>
-            <p className="text-xl text-dark-100 mb-8 leading-relaxed">
-              Build your cactus empire in our unique Minecraft tycoon experience.
-              Learn strategies, compete with others, and become the ultimate cactus farmer!
-            </p>
-            <div className="flex space-x-4">
-              <Link
-                to="/wiki/getting-started"
-                className="px-6 py-3 bg-neon-600 hover:bg-neon-500 text-dark-950 rounded-lg font-semibold transition-colors shadow-lg hover:shadow-neon-500/20"
-              >
-                Start Farming
-              </Link>
-              <Link
-                to="/wiki/guides"
-                className="px-6 py-3 bg-dark-800/80 hover:bg-dark-700 text-dark-100 rounded-lg font-semibold transition-colors border border-dark-700 backdrop-blur-sm"
-              >
-                View Guides
-              </Link>
-            </div>
+      <section className={`relative overflow-hidden rounded-2xl ${isDarkMode ? 'bg-dark-900/70 border border-dark-700' : 'bg-white border border-slate-200 shadow-sm'} p-4 md:p-6`}>
+        <div className="relative z-10 max-w-4xl mx-auto">
+          <h1 className={`text-3xl md:text-4xl font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'} mb-4`}>Willkommen im Community-Wiki für Cytooxien</h1>
+          
+          <p className={`text-lg ${isDarkMode ? 'text-dark-300' : 'text-slate-600'} max-w-2xl mb-8`}>Hier findest du alle wichtigen Informationen zum Minecraft-Server Cytooxien, Spielmodi, Befehlen und vielem mehr.</p>
+          
+          <div className="flex flex-wrap gap-4">
+            <Link 
+              to="/wiki/einsteiger" 
+              className="relative px-6 py-3 rounded-lg overflow-hidden group flex items-center"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-cyto-600 to-cyto-700 transition-transform duration-300 group-hover:scale-105"></div>
+              <div className="absolute inset-0 opacity-0 bg-gradient-to-r from-cyto-500 to-cyto-600 transition-opacity duration-300 group-hover:opacity-100"></div>
+              <span className="relative z-10 text-white font-medium">Erste Schritte</span>
+            </Link>
+            
+            <Link 
+              to="/wiki" 
+              className={`px-6 py-3 rounded-lg ${isDarkMode ? 'bg-dark-800 hover:bg-dark-700 text-dark-200 border border-dark-700' : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'} transition-all duration-300 flex items-center`}
+            >
+              <span>Guides ansehen</span>
+            </Link>
           </div>
+          
+          <div className={`mt-8 p-4 rounded-lg ${isDarkMode ? 'bg-dark-800/50 border border-dark-700/50' : 'bg-slate-50 border border-slate-200'} text-sm ${isDarkMode ? 'text-dark-400' : 'text-slate-500'}`}>Dieses Wiki wurde von einem Communitymitglied erstellt und wird von diesem betrieben. Es handelt sich um keine offizielle Seite von Cytooxien. Es findet keine Kooperation mit Cytooxien statt. Cytooxien haftet nicht und ist für diese Seite nicht verantwortlich.</div>
         </div>
-      </div>
-
+      </section>
+      
       {/* Featured Categories */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-bold text-neon-400 mb-8">Featured Content</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <section>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-cyto-400' : 'text-cyto-600'}`}>Beliebte Kategorien</h2>
+          <Link 
+            to="/wiki" 
+            className={`flex items-center ${isDarkMode ? 'text-dark-300 hover:text-cyto-400' : 'text-slate-600 hover:text-cyto-600'} transition-colors duration-300`}
+          >
+            <span>Alle anzeigen</span>
+            <ArrowRight className="ml-1 h-4 w-4" />
+          </Link>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature, index) => (
-            <Link
-              key={index}
+            <Link 
+              key={index} 
               to={feature.link}
-              className="group relative overflow-hidden rounded-xl h-80 border border-dark-800 bg-dark-900 hover:border-neon-500/30 transition-all duration-300"
+              className={`group relative overflow-hidden rounded-xl ${isDarkMode 
+                ? 'bg-gradient-to-b from-dark-800 to-dark-900 hover:from-dark-700 hover:to-dark-800 border border-dark-700 hover:border-dark-600' 
+                : 'bg-gradient-to-b from-white to-slate-50 hover:from-slate-50 hover:to-slate-100 border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow'} 
+                transition-all duration-300 p-6 flex flex-col h-full`}
             >
-              <div className="absolute inset-0">
-                <img
-                  src={feature.bgImage}
-                  alt={feature.title}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/90 to-dark-900/50 group-hover:from-dark-900/90 group-hover:via-dark-900/80 group-hover:to-dark-900/40 transition-colors duration-300" />
+              <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-dark-800/50' : 'bg-slate-100'} w-fit mb-4`}>
+                {React.cloneElement(feature.icon, { className: `h-8 w-8 ${isDarkMode ? 'text-cyto-400' : 'text-cyto-600'}` })}
               </div>
-              <div className="relative h-full p-6 flex flex-col justify-end">
-                <div className="mb-4 p-4 bg-neon-500/10 rounded-lg w-fit backdrop-blur-sm border border-neon-500/20 group-hover:border-neon-500/30 transition-colors">
-                  <div className="text-neon-400">{feature.icon}</div>
-                </div>
-                <h3 className="text-2xl font-bold text-neon-400 mb-2 group-hover:text-neon-300 transition-colors">
-                  {feature.title}
-                </h3>
-                <p className="text-dark-200 group-hover:text-dark-100 transition-colors">
-                  {feature.description}
-                </p>
+              
+              <h3 className={`text-lg font-medium ${isDarkMode ? 'text-dark-100' : 'text-slate-900'} mb-2`}>{feature.title}</h3>
+              <p className={`text-sm ${isDarkMode ? 'text-dark-400' : 'text-slate-500'}`}>{feature.description}</p>
+              
+              <div className={`mt-auto pt-4 text-sm font-medium ${isDarkMode ? 'text-cyto-400' : 'text-cyto-600'} flex items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300`}>
+                <span>Mehr erfahren</span>
+                <ArrowRight className="ml-1 h-4 w-4" />
               </div>
             </Link>
           ))}
         </div>
-      </div>
-
+      </section>
+      
       {/* Quick Access Guides */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-bold text-neon-400 mb-8">Essential Guides</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <section>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-cyto-400' : 'text-cyto-600'}`}>Wichtige Guides</h2>
+          <Link 
+            to="/wiki" 
+            className={`flex items-center ${isDarkMode ? 'text-dark-300 hover:text-cyto-400' : 'text-slate-600 hover:text-cyto-600'} transition-colors duration-300`}
+          >
+            <span>Alle anzeigen</span>
+            <ArrowRight className="ml-1 h-4 w-4" />
+          </Link>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {guides.map((guide, index) => (
-            <Link
-              key={index}
+            <Link 
+              key={index} 
               to={guide.link}
-              className="bg-dark-900 rounded-xl p-6 hover:bg-dark-800 transition-all duration-300 border border-dark-800 hover:border-neon-500/30 hover:-translate-y-1 relative overflow-hidden"
+              className={`group relative overflow-hidden rounded-xl ${isDarkMode 
+                ? 'bg-gradient-to-b from-dark-800 to-dark-900 hover:from-dark-700 hover:to-dark-800 border border-dark-700 hover:border-dark-600' 
+                : 'bg-gradient-to-b from-white to-slate-50 hover:from-slate-50 hover:to-slate-100 border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow'} 
+                transition-all duration-300 p-6 flex flex-col h-full`}
             >
-              <div className="absolute inset-0">
-                <img
-                  src={guide.bgImage}
-                  alt={guide.title}
-                  className="w-full h-full object-cover opacity-10"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/90 to-dark-900/70" />
+              <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-dark-800/50' : 'bg-slate-100'} w-fit mb-4`}>
+                {React.cloneElement(guide.icon, { className: `h-6 w-6 ${isDarkMode ? 'text-cyto-400' : 'text-cyto-600'}` })}
               </div>
-              <div className="relative z-10">
-                <div className="mb-4 p-3 bg-neon-500/10 rounded-lg w-fit backdrop-blur-sm border border-neon-500/20">
-                  <div className="text-neon-400">{guide.icon}</div>
-                </div>
-                <h3 className="text-lg font-semibold text-neon-400 mb-2">{guide.title}</h3>
-                <p className="text-dark-300">{guide.description}</p>
+              
+              <h3 className={`text-lg font-medium ${isDarkMode ? 'text-dark-100' : 'text-slate-900'} mb-2`}>{guide.title}</h3>
+              <p className={`text-sm ${isDarkMode ? 'text-dark-400' : 'text-slate-500'}`}>{guide.description}</p>
+              
+              <div className={`mt-auto pt-4 text-sm font-medium ${isDarkMode ? 'text-cyto-400' : 'text-cyto-600'} flex items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300`}>
+                <span>Mehr erfahren</span>
+                <ArrowRight className="ml-1 h-4 w-4" />
               </div>
             </Link>
           ))}
         </div>
-      </div>
-
+      </section>
+      
       {/* Latest Updates */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-dark-900 rounded-xl border border-dark-800 p-8">
-          <h2 className="text-3xl font-bold text-neon-400 mb-6">Latest Updates</h2>
-          <div className="space-y-6">
+      <section className={`rounded-2xl ${isDarkMode ? 'bg-dark-900/70 border border-dark-700' : 'bg-white border border-slate-200 shadow-sm'} overflow-hidden`}>
+        <div className="p-6 md:p-8">
+          <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-cyto-400' : 'text-cyto-600'} mb-6`}>Neueste Updates</h2>
+          
+          <div className="space-y-6 relative z-10">
             {isLoading ? (
               <div className="text-center py-8">
-                <div className="text-dark-300">Loading updates...</div>
+                <div className="text-dark-300">Updates werden geladen...</div>
               </div>
             ) : updates.length === 0 ? (
               <div className="text-center py-8">
-                <div className="text-dark-300">No updates available yet.</div>
+                <div className="text-dark-300">Noch keine Updates verfügbar.</div>
               </div>
             ) : (
               updates.map((update, index) => (
-                <div key={update.id} className={`flex gap-6 items-start ${index < updates.length - 1 ? 'pb-6 border-b border-dark-800' : ''}`}>
-                  <div className="flex-shrink-0 w-16 h-16 bg-neon-500/10 rounded-lg flex items-center justify-center">
-                    <Info className="h-8 w-8 text-neon-400" />
+                <div key={update.id} className={`flex gap-6 items-start ${index < updates.length - 1 ? 'pb-6 border-b border-dark-700' : ''} hover:bg-dark-800/30 p-4 rounded-lg transition-all duration-300 -mx-4`}>
+                  <div className="flex-shrink-0 w-16 h-16 bg-cyto-600/20 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:bg-cyto-600/30">
+                    <Info className="h-8 w-8 text-cyto-400 transition-colors duration-300 group-hover:text-cyto-300" />
                   </div>
                   <div className="flex-1">
                     <Link to={`/updates/${update.id}`}>
-                      <h3 className="text-xl font-semibold text-neon-400 mb-2 hover:text-neon-300 transition-colors">{update.title}</h3>
+                      <h3 className="text-xl font-semibold text-cyto-400 mb-2 hover:text-cyto-300 transition-colors duration-300">{update.title}</h3>
                     </Link>
                     <div 
-                      className="text-dark-300 mb-3 update-content"
+                      className="text-dark-300 mb-3 update-content hover:text-dark-200 transition-colors duration-300"
                       dangerouslySetInnerHTML={{ 
                         __html: update.content.length > 150 
                           ? truncateHTML(update.content, 150) 
@@ -244,15 +253,16 @@ export function Home() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center text-sm text-dark-400">
                         <Clock className="h-4 w-4 mr-1" />
-                        <span>{format(new Date(update.created_at), 'MMMM d, yyyy')}</span>
+                        <span>{format(new Date(update.created_at), 'dd.MM.yyyy')}</span>
                         <span className="mx-2">•</span>
-                        <span>By {update.author}</span>
+                        <span>Von {update.author}</span>
                       </div>
                       <Link 
                         to={`/updates/${update.id}`}
-                        className="text-sm text-neon-400 hover:text-neon-300 transition-colors"
+                        className="text-sm text-cyto-500 hover:text-cyto-400 transition-colors duration-300 flex items-center group"
                       >
-                        Mehr lesen →
+                        <span>Mehr lesen</span>
+                        <span className="ml-1 transform transition-transform duration-300 group-hover:translate-x-0.5">→</span>
                       </Link>
                     </div>
                   </div>
@@ -261,7 +271,7 @@ export function Home() {
             )}
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

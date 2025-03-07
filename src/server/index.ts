@@ -313,6 +313,14 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+// Register
+app.post('/api/auth/register', async (req, res) => {
+  // Registrierung deaktiviert - nur Admin-Zugang erlaubt
+  return res.status(403).json({ 
+    message: 'Die Registrierung ist deaktiviert. Bitte kontaktiere den Administrator für einen Zugang.' 
+  });
+});
+
 // Get admin settings
 app.get('/api/admin/settings', authenticateToken, async (req, res) => {
   try {
@@ -903,7 +911,187 @@ app.get('/api/admin/articles/:id/edit', authenticateToken, async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
+// Get player count
+app.get('/api/player-count', async (req, res) => {
+  try {
+    // Simulierte Spielerzahl - hier könnte später eine echte Verbindung zum Spielserver erfolgen
+    const onlinePlayers = Math.floor(Math.random() * 150) + 50; // Zufällige Zahl zwischen 50 und 200
+    const maxPlayers = 500;
+    
+    res.json({
+      online: onlinePlayers,
+      max: maxPlayers,
+      percentage: Math.round((onlinePlayers / maxPlayers) * 100)
+    });
+  } catch (error) {
+    console.error('Error fetching player count:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Admin Users API
+// Get all users
+app.get('/api/admin/users', authenticateToken, async (req, res) => {
+  try {
+    const [users] = await pool.execute(`
+      SELECT id, username, email, role, created_at, last_login 
+      FROM users 
+      ORDER BY username
+    `);
+    
+    // Passwörter niemals an Frontend senden
+    res.json(users);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Get a single user
+app.get('/api/admin/users/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [users] = await pool.execute(`
+      SELECT id, username, email, role, created_at, last_login 
+      FROM users 
+      WHERE id = ?
+    `, [id]);
+    
+    if (Array.isArray(users) && users.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    res.json(users[0]);
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Create new user
+app.post('/api/admin/users', authenticateToken, async (req, res) => {
+  try {
+    const { username, email, password, role } = req.body;
+    
+    // Validierung
+    if (!username || !email || !password) {
+      return res.status(400).json({ message: 'Username, email and password are required' });
+    }
+    
+    // Überprüfen, ob Benutzer bereits existiert
+    const [existingUsers] = await pool.execute('SELECT id FROM users WHERE username = ? OR email = ?', [username, email]);
+    if (Array.isArray(existingUsers) && existingUsers.length > 0) {
+      return res.status(409).json({ message: 'Username or email already exists' });
+    }
+    
+    // Passwort hashen
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    // Benutzer in Datenbank speichern
+    const [result] = await pool.execute(`
+      INSERT INTO users (username, email, password, role, created_at) 
+      VALUES (?, ?, ?, ?, NOW())
+    `, [username, email, hashedPassword, role || 'editor']);
+    
+    const id = result.insertId;
+    
+    res.status(201).json({ 
+      id, 
+      username, 
+      email, 
+      role: role || 'editor' 
+    });
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Update user
+app.put('/api/admin/users/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { username, email, role, password } = req.body;
+    
+    // Überprüfen, ob Benutzer existiert
+    const [users] = await pool.execute('SELECT id FROM users WHERE id = ?', [id]);
+    if (Array.isArray(users) && users.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    // Wenn ein neues Passwort gesetzt wird, dieses hashen
+    let hashedPassword;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+    
+    // Update-Felder und -Werte erstellen
+    const updateFields = [];
+    const updateValues = [];
+    
+    if (username) {
+      updateFields.push('username = ?');
+      updateValues.push(username);
+    }
+    
+    if (email) {
+      updateFields.push('email = ?');
+      updateValues.push(email);
+    }
+    
+    if (role) {
+      updateFields.push('role = ?');
+      updateValues.push(role);
+    }
+    
+    if (hashedPassword) {
+      updateFields.push('password = ?');
+      updateValues.push(hashedPassword);
+    }
+    
+    if (updateFields.length === 0) {
+      return res.status(400).json({ message: 'No fields to update' });
+    }
+    
+    // ID für WHERE-Klausel hinzufügen
+    updateValues.push(id);
+    
+    // Update ausführen
+    await pool.execute(`
+      UPDATE users 
+      SET ${updateFields.join(', ')} 
+      WHERE id = ?
+    `, updateValues);
+    
+    res.json({ message: 'User updated successfully' });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Delete user
+app.delete('/api/admin/users/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Überprüfen, ob der Benutzer existiert
+    const [users] = await pool.execute('SELECT id FROM users WHERE id = ?', [id]);
+    if (Array.isArray(users) && users.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    // Benutzer löschen
+    await pool.execute('DELETE FROM users WHERE id = ?', [id]);
+    
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+const PORT = process.env.PORT || 3001;
 
 // Nur starten, wenn nicht in Vercel-Umgebung
 if (process.env.VERCEL_ENV === undefined) {

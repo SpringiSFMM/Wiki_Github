@@ -40,7 +40,7 @@ export function UpdateDetail() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center py-16">
           <div className="text-red-500 mb-4">Fehler beim Laden des Updates</div>
-          <Link to="/" className="text-neon-400 hover:text-neon-300">
+          <Link to="/" className="text-cyto-400 hover:text-cyto-300">
             Zurück zur Startseite
           </Link>
         </div>
@@ -50,17 +50,17 @@ export function UpdateDetail() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <Link to="/" className="inline-flex items-center text-neon-400 hover:text-neon-300 mb-8">
+      <Link to="/" className="inline-flex items-center text-cyto-400 hover:text-cyto-300 mb-8">
         <ArrowLeft className="h-4 w-4 mr-2" />
         Zurück zur Übersicht
       </Link>
       
-      <div className="bg-dark-900 rounded-xl border border-dark-800 p-8 shadow-lg">
-        <h1 className="text-3xl font-bold text-neon-400 mb-4">{update.title}</h1>
+      <div className="bg-dark-900 rounded-xl border border-dark-700 p-8 shadow-md">
+        <h1 className="text-3xl font-bold text-cyto-400 mb-4">{update.title}</h1>
         
         <div className="flex items-center text-dark-400 mb-8">
           <Clock className="h-4 w-4 mr-1" />
-          <span>{format(new Date(update.created_at), 'MMMM d, yyyy')}</span>
+          <span>{format(new Date(update.created_at), 'dd.MM.yyyy')}</span>
           <span className="mx-2">•</span>
           <User className="h-4 w-4 mr-1" />
           <span>{update.author}</span>

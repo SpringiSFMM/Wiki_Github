@@ -36,16 +36,17 @@ async function setupDatabase() {
     // Create default admin user with explicit UUID
     const [adminUuidResult] = await connection.execute('SELECT UUID() as uuid');
     const adminId = (adminUuidResult as any[])[0].uuid;
-    const hashedPassword = await bcrypt.hash('admin123', 10);
+    const hashedPassword = await bcrypt.hash('Cytooxien2025!', 10);
     
     await connection.execute(
-      'INSERT INTO admins (id, username, password) VALUES (?, ?, ?)',
-      [adminId, 'admin', hashedPassword]
+      'INSERT INTO admins (id, username, password, email) VALUES (?, ?, ?, ?)',
+      [adminId, 'cytooxien_admin', hashedPassword, 'admin@cytooxien.de']
     );
 
     console.log('✓ Default admin user created');
-    console.log('  Username: admin');
-    console.log('  Password: admin123');
+    console.log('  Username: cytooxien_admin');
+    console.log('  Password: Cytooxien2025!');
+    console.log('  Email: admin@cytooxien.de');
 
     // Create settings table
     await connection.execute(`
@@ -185,8 +186,9 @@ async function setupDatabase() {
 
     console.log('\nDatabase setup completed successfully! 🎉');
     console.log('\nYou can now start the server and login with:');
-    console.log('Username: admin');
-    console.log('Password: admin123');
+    console.log('Username: cytooxien_admin');
+    console.log('Password: Cytooxien2025!');
+    console.log('Email: admin@cytooxien.de');
 
   } catch (error) {
     // Rollback on error

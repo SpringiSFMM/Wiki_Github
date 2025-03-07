@@ -1,0 +1,346 @@
+/* Light Theme Anpassungen */
+.light {
+  /* Hintergrundfarben */
+  --background: #ffffff;
+  --background-secondary: #ffffff;
+  --background-tertiary: #f8fafc;
+  
+  /* Textfarben */
+  --text-primary: #1a202c;
+  --text-secondary: #4a5568;
+  --text-tertiary: #718096;
+  
+  /* Akzentfarben */
+  --accent-primary: #3182ce;
+  --accent-secondary: #4299e1;
+  
+  /* Schatten */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Light Mode Spezifische Komponenten */
+.light .bg-dark-950 {
+  background-color: var(--background);
+}
+
+.light .bg-dark-900 {
+  background-color: var(--background-secondary);
+}
+
+.light .bg-dark-900\/80 {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.light .bg-dark-800 {
+  background-color: #f8fafc;
+}
+
+.light .bg-dark-800\/50, 
+.light .bg-dark-800\/70 {
+  background-color: rgba(248, 250, 252, 0.8);
+}
+
+.light .text-dark-100 {
+  color: var(--text-primary);
+}
+
+.light .text-dark-200 {
+  color: var(--text-primary);
+}
+
+.light .text-dark-300 {
+  color: var(--text-secondary);
+}
+
+.light .text-dark-400 {
+  color: var(--text-tertiary);
+}
+
+.light .border-dark-700 {
+  border-color: #e2e8f0;
+}
+
+.light .border-dark-800 {
+  border-color: #edf2f7;
+}
+
+.light .border-dark-700\/50,
+.light .border-dark-800\/50 {
+  border-color: rgba(226, 232, 240, 0.5);
+}
+
+/* Karten und Container */
+.light .card,
+.light .bg-dark-900\/50 {
+  background-color: white;
+  border-color: #e2e8f0;
+  box-shadow: var(--shadow-md);
+}
+
+/* Formulare */
+.light input, 
+.light select, 
+.light textarea,
+.light .bg-dark-800\/70 {
+  background-color: white;
+  border-color: #e2e8f0;
+  color: var(--text-primary);
+}
+
+.light input:focus, 
+.light select:focus, 
+.light textarea:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.2);
+}
+
+/* Buttons */
+.light .btn-primary {
+  background-color: var(--accent-primary);
+  color: white;
+}
+
+.light .btn-secondary {
+  background-color: #edf2f7;
+  color: var(--text-secondary);
+}
+
+/* Navigationsleiste */
+.light header {
+  background-color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.light .nav-link {
+  color: var(--text-secondary);
+}
+
+.light .nav-link:hover {
+  color: var(--accent-primary);
+}
+
+/* Scrollbar */
+.light ::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+}
+
+.light ::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+/* Glasmorphismus-Effekte */
+.light .backdrop-blur-md,
+.light .backdrop-blur-sm {
+  backdrop-filter: blur(8px);
+}
+
+/* Schatten */
+.light .shadow-dark-950\/20 {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Hover-Effekte */
+.light .hover\:bg-dark-800:hover {
+  background-color: #f1f5f9;
+}
+
+.light .hover\:bg-dark-800\/70:hover {
+  background-color: rgba(241, 245, 249, 0.7);
+}
+
+.light .hover\:text-dark-100:hover {
+  color: #1a202c;
+}
+
+/* Zusätzliche Anpassungen für bessere Lesbarkeit im Light Mode */
+.light .min-h-screen {
+  background-color: #ffffff;
+}
+
+.light .from-dark-900 {
+  --tw-gradient-from: #ffffff;
+}
+
+.light .via-dark-950 {
+  --tw-gradient-via: #fafafa;
+}
+
+.light .to-dark-900 {
+  --tw-gradient-to: #ffffff;
+}
+
+.light .from-cyto-600\/10 {
+  --tw-gradient-from: rgba(49, 130, 206, 0.1);
+}
+
+.light .from-cyto-700\/10 {
+  --tw-gradient-from: rgba(44, 82, 130, 0.1);
+}
+
+/* Verbesserte Lesbarkeit für Text im Light Mode */
+.light .text-cyto-400 {
+  color: #2b6cb0; /* Dunkleres Blau für besseren Kontrast */
+}
+
+/* Anpassungen für Formulare im Light Mode */
+.light .focus\\:ring-cyto-500\/50:focus {
+  --tw-ring-color: rgba(49, 130, 206, 0.3);
+}
+
+.light .placeholder-dark-400::placeholder {
+  color: #a0aec0;
+}
+
+/* Anpassungen für Buttons im Light Mode */
+.light .from-cyto-600 {
+  --tw-gradient-from: #2b6cb0;
+}
+
+.light .to-cyto-700 {
+  --tw-gradient-to: #2c5282;
+}
+
+/* Neue Anpassungen für bessere Light Mode Darstellung */
+.light .bg-dark-700 {
+  background-color: #f1f5f9;
+}
+
+.light .bg-dark-800\/80 {
+  background-color: rgba(248, 250, 252, 0.9);
+}
+
+.light .bg-dark-900\/70 {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.light .from-dark-950\/90,
+.light .from-dark-950\/80,
+.light .from-dark-950\/70 {
+  --tw-gradient-from: rgba(255, 255, 255, 0.9);
+}
+
+.light .via-dark-950\/80,
+.light .via-dark-950\/70 {
+  --tw-gradient-via: rgba(250, 250, 250, 0.8);
+}
+
+.light .to-dark-950\/70 {
+  --tw-gradient-to: rgba(255, 255, 255, 0.7);
+}
+
+.light .from-dark-900\/90,
+.light .from-dark-900\/80,
+.light .from-dark-900\/70 {
+  --tw-gradient-from: rgba(255, 255, 255, 0.9);
+}
+
+.light .via-dark-900\/90,
+.light .via-dark-900\/80,
+.light .via-dark-900\/70 {
+  --tw-gradient-via: rgba(250, 250, 250, 0.8);
+}
+
+.light .to-dark-900\/90,
+.light .to-dark-900\/80,
+.light .to-dark-900\/70 {
+  --tw-gradient-to: rgba(255, 255, 255, 0.7);
+}
+
+.light .hover\:bg-dark-700:hover {
+  background-color: #edf2f7;
+}
+
+.light .hover\:border-dark-600:hover {
+  border-color: #cbd5e0;
+}
+
+.light .hover\:from-dark-900\/90:hover,
+.light .hover\:via-dark-900\/80:hover,
+.light .hover\:to-dark-900\/70:hover {
+  --tw-gradient-from: rgba(255, 255, 255, 0.9);
+  --tw-gradient-via: rgba(250, 250, 250, 0.8);
+  --tw-gradient-to: rgba(255, 255, 255, 0.7);
+}
+
+/* ServerStatus Component Light Mode Styles */
+.light .ServerStatus {
+  background-color: white;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  border: 1px solid #f1f5f9;
+}
+
+.light .ServerStatus-online {
+  color: #16a34a !important; /* Dunkleres Grün für besseren Kontrast */
+}
+
+.light .ServerStatus-online .animate-pulse {
+  background-color: #16a34a !important;
+}
+
+.light .ServerStatus-offline {
+  color: #dc2626 !important; /* Dunkleres Rot für besseren Kontrast */
+}
+
+.light .ServerStatus-offline .animate-pulse {
+  background-color: #dc2626 !important;
+}
+
+.light .ServerStatus button {
+  background-color: #f8fafc;
+  border-color: #e2e8f0;
+  color: #475569;
+}
+
+.light .ServerStatus button:hover {
+  background-color: #f1f5f9;
+  color: #334155;
+}
+
+.light .ServerStatus a[href*="discord"] {
+  color: #334155;
+}
+
+.light .ServerStatus a[href*="discord"] .absolute:first-of-type {
+  background-color: #f1f5f9;
+}
+
+.light .ServerStatus a[href*="discord"] .absolute:nth-of-type(2) {
+  background-color: #e2e8f0;
+}
+
+.light .ServerStatus a[href*="discord"] svg {
+  color: #64748b;
+}
+
+.light .ServerStatus .bg-dark-800\/70 {
+  background-color: #e2e8f0 !important;
+}
+
+/* Anpassungen für FWSites und Home Komponenten */
+.light .bg-gradient-to-r.from-dark-900.via-dark-800.to-dark-900 {
+  background: linear-gradient(to right, #ffffff, #f8fafc, #ffffff);
+}
+
+.light .bg-gradient-to-r.from-dark-900.to-dark-800 {
+  background: linear-gradient(to right, #ffffff, #f8fafc);
+}
+
+.light .bg-gradient-to-t.from-dark-900.via-dark-900\/80.to-transparent {
+  background: linear-gradient(to top, #ffffff, rgba(255, 255, 255, 0.8), transparent);
+}
+
+.light .bg-gradient-to-t.from-dark-900.via-dark-900\/90.to-dark-900\/80 {
+  background: linear-gradient(to top, #ffffff, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8));
+}
+
+.light .hover\:bg-dark-800\/30:hover {
+  background-color: rgba(248, 250, 252, 0.3);
+}
