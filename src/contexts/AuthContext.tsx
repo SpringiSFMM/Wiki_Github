@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import axios from 'axios';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -17,24 +18,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Check if user is already logged in
     const token = localStorage.getItem('auth_token');
     if (token) {
+      // Set the default Authorization header for all axios requests
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setIsAuthenticated(true);
     }
     setIsLoading(false);
   }, []);
 
   const login = async (username: string, password: string) => {
-    // For demo purposes, we'll use a simple check
-    // In production, this should be replaced with actual API calls
-    if (username === 'admin' && password === 'admin') {
-      localStorage.setItem('auth_token', 'demo_token');
+    try {
+      // Try to login with the API first
+      const response = await axios.post('/api/login', { username, password });
+      const { token } = response.data;
+      
+      // Store the token and set the default Authorization header
+      localStorage.setItem('auth_token', token);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setIsAuthenticated(true);
-    } else {
-      throw new Error('Invalid credentials');
+    } catch (error) {
+      // Fallback to demo login if API login fails
+      if (username === 'admin' && password === 'admin') {
+        // For demo purposes only
+        const demoToken = 'demo_token';
+        localStorage.setItem('auth_token', demoToken);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${demoToken}`;
+        setIsAuthenticated(true);
+      } else {
+        throw new Error('Invalid credentials');
+      }
     }
   };
 
   const logout = () => {
     localStorage.removeItem('auth_token');
+    delete axios.defaults.headers.common['Authorization'];
     setIsAuthenticated(false);
   };
 

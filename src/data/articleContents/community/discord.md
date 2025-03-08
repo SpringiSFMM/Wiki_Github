@@ -1,0 +1,1 @@
+<h1>Discord-Community Willkommen in der Discord-Community von Kaktus Tycoon!</h1><h2>Hier findest du alle wichtigen Informationen über unseren Discord-Server und wie du dich optimal einbringen kannst.</h2><p></p><p></p><h2></h2>

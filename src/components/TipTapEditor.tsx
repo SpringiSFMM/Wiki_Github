@@ -7,6 +7,10 @@ import Image from '@tiptap/extension-image';
 import TextAlign from '@tiptap/extension-text-align';
 import TextStyle from '@tiptap/extension-text-style';
 import Color from '@tiptap/extension-color';
+import Table from '@tiptap/extension-table';
+import TableRow from '@tiptap/extension-table-row';
+import TableCell from '@tiptap/extension-table-cell';
+import TableHeader from '@tiptap/extension-table-header';
 import './TipTapEditor.css';
 
 interface TipTapEditorProps {
@@ -35,8 +39,17 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
       TextStyle,
       Color,
       TextAlign.configure({
-        types: ['heading', 'paragraph'],
+        types: ['heading', 'paragraph', 'table'],
       }),
+      Table.configure({
+        resizable: true,
+        HTMLAttributes: {
+          class: 'tiptap-table',
+        },
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
     ],
     content: value,
     onUpdate: ({ editor }) => {
@@ -177,6 +190,83 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
         >
           Image
         </button>
+        <div className="table-controls">
+          <button
+            onClick={() => {
+              const rows = parseInt(window.prompt('Anzahl der Zeilen', '3') || '3');
+              const cols = parseInt(window.prompt('Anzahl der Spalten', '3') || '3');
+              
+              editor.chain().focus().insertTable({ rows, cols, withHeaderRow: true }).run();
+            }}
+            type="button"
+          >
+            Tabelle einfügen
+          </button>
+          {editor.isActive('table') && (
+            <>
+              <button
+                onClick={() => editor.chain().focus().addColumnBefore().run()}
+                type="button"
+              >
+                Spalte davor
+              </button>
+              <button
+                onClick={() => editor.chain().focus().addColumnAfter().run()}
+                type="button"
+              >
+                Spalte danach
+              </button>
+              <button
+                onClick={() => editor.chain().focus().deleteColumn().run()}
+                type="button"
+              >
+                Spalte löschen
+              </button>
+              <button
+                onClick={() => editor.chain().focus().addRowBefore().run()}
+                type="button"
+              >
+                Zeile davor
+              </button>
+              <button
+                onClick={() => editor.chain().focus().addRowAfter().run()}
+                type="button"
+              >
+                Zeile danach
+              </button>
+              <button
+                onClick={() => editor.chain().focus().deleteRow().run()}
+                type="button"
+              >
+                Zeile löschen
+              </button>
+              <button
+                onClick={() => editor.chain().focus().deleteTable().run()}
+                type="button"
+              >
+                Tabelle löschen
+              </button>
+              <button
+                onClick={() => editor.chain().focus().mergeCells().run()}
+                type="button"
+              >
+                Zellen verbinden
+              </button>
+              <button
+                onClick={() => editor.chain().focus().splitCell().run()}
+                type="button"
+              >
+                Zelle teilen
+              </button>
+              <button
+                onClick={() => editor.chain().focus().toggleHeaderCell().run()}
+                type="button"
+              >
+                Kopfzelle umschalten
+              </button>
+            </>
+          )}
+        </div>
       </div>
       <EditorContent editor={editor} className="tiptap-content" />
     </div>

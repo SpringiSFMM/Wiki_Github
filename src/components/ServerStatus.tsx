@@ -46,7 +46,7 @@ export function ServerStatus() {
             ) : (
               <WifiOff className={`w-5 h-5 mr-2 text-red-500`} />
             )}
-            Cytooxien Server
+            Kaktus Tycoon Server
           </h3>
           
           <button 

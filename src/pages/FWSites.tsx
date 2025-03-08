@@ -43,8 +43,8 @@ export function FWSites() {
           <p className="text-dark-200 mb-6 relative z-10">
             FWSites ist ein führendes Unternehmen in der Webentwicklung, das sich auf die Erstellung maßgeschneiderter Websites und Plattformen für Gaming-Communities und Minecraft-Server spezialisiert hat. Mit jahrelanger Erfahrung und tiefem Verständnis für die Bedürfnisse von Spieleservern bietet FWSites erstklassige Lösungen, die sowohl funktional als auch ästhetisch ansprechend sind.
           </p>
-          <p className="text-dark-200 mb-10 relative z-10">
-            Als vertrauenswürdiger Partner von Cytooxien hat FWSites maßgeblich zur Entwicklung unserer Online-Präsenz beigetragen und uns geholfen, eine professionelle und benutzerfreundliche Plattform für unsere Community zu schaffen.
+          <p className="text-dark-200 leading-relaxed mb-6">
+            Als vertrauenswürdiger Partner von Kaktus Tycoon hat FWSites maßgeblich zur Entwicklung unserer Online-Präsenz beigetragen und uns geholfen, eine professionelle und benutzerfreundliche Plattform für unsere Community zu schaffen.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 relative z-10">

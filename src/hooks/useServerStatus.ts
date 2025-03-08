@@ -54,9 +54,9 @@ const mockServerStatus: ServerStatusResponse = {
   version: "1.21.4",
   protocol: 765,
   motd: {
-    raw: ["Willkommen auf Cytooxien!"],
-    clean: ["Willkommen auf Cytooxien!"],
-    html: ["<span>Willkommen auf Cytooxien!</span>"]
+    raw: ["Willkommen auf Kaktus Tycoon!"],
+    clean: ["Willkommen auf Kaktus Tycoon!"],
+    html: ["<span>Willkommen auf Kaktus Tycoon!</span>"]
   }
 };
 

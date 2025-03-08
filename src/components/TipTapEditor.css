@@ -102,3 +102,69 @@
   color: #4f46e5;
   text-decoration: underline;
 }
+
+/* Tabellen-Styling */
+.tiptap-editor-content table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  overflow: hidden;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.tiptap-editor-content table td,
+.tiptap-editor-content table th {
+  border: 2px solid #ddd;
+  padding: 8px 12px;
+  position: relative;
+  min-width: 100px;
+}
+
+.tiptap-editor-content table th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+  text-align: left;
+}
+
+.tiptap-editor-content table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.tiptap-editor-content table tr:hover {
+  background-color: #e9ecef;
+}
+
+/* Tabellensteuerelemente */
+.table-controls {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 5px;
+  padding-top: 5px;
+  border-top: 1px dashed #ccc;
+  width: 100%;
+}
+
+.table-controls button {
+  background-color: #f0f4f8;
+  margin-right: 3px;
+  margin-bottom: 3px;
+  font-size: 12px;
+}
+
+/* Resize-Handle für Tabellen */
+.tiptap-table .resize-handle {
+  position: absolute;
+  top: 0;
+  right: -2px;
+  bottom: 0;
+  width: 4px;
+  background-color: #4f46e5;
+  opacity: 0;
+  transition: opacity 0.3s;
+  cursor: col-resize;
+}
+
+.tiptap-table .resize-handle:hover,
+.tiptap-table .resize-handle.dragging {
+  opacity: 0.3;
+}

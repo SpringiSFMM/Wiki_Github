@@ -55,3 +55,6 @@ export function WikiArticle() {
   // If there's an error or the article data is not available, ArticleViewer will handle it
   return <ArticleViewer article={articleData as Article} isLoading={isLoading} />;
 }
+
+// Default-Export hinzufügen für lazy loading
+export default WikiArticle;

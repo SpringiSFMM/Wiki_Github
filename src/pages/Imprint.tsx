@@ -76,12 +76,12 @@ export function Imprint() {
             </div>
             
             <div>
-              <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-dark-100' : 'text-slate-900'} mb-4`}>Hinweis zur Cytooxien-Wiki</h2>
+              <h2 className={`text-xl font-semibold ${isDarkMode ? 'text-dark-100' : 'text-slate-900'} mb-4`}>Hinweis zur Kaktus Tycoon - Wiki</h2>
               <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-dark-800/50' : 'bg-slate-50'} border ${isDarkMode ? 'border-dark-700' : 'border-slate-200'}`}>
-                <p className={`${isDarkMode ? 'text-dark-300' : 'text-slate-600'}`}>
-                  Dieses Wiki wurde von einem Community-Mitglied erstellt und wird von diesem betrieben. 
-                  Es handelt sich um keine offizielle Seite von Cytooxien. Es findet keine Kooperation mit Cytooxien statt. 
-                  Cytooxien haftet nicht und ist für diese Seite nicht verantwortlich.
+                <p className={`${isDarkMode ? 'text-dark-300' : 'text-slate-700'}`}>
+                  Dieses Wiki wurde von einem Communitymitglied erstellt und wird von diesem betrieben. 
+                  Es handelt sich um keine offizielle Seite von Kaktus Tycoon. Es findet keine Kooperation mit Kaktus Tycoon statt. 
+                  Kaktus Tycoon haftet nicht und ist für diese Seite nicht verantwortlich.
                 </p>
               </div>
             </div>

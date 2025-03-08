@@ -10,9 +10,10 @@ interface Update {
   id: string;
   title: string;
   content: string;
-  created_at: string;
-  updated_at: string;
-  author: string;
+  created_at?: string;
+  updated_at?: string;
+  author?: string;
+  date?: string;
 }
 
 export function Home() {
@@ -114,9 +115,9 @@ export function Home() {
       {/* Hero Section */}
       <section className={`relative overflow-hidden rounded-2xl ${isDarkMode ? 'bg-dark-900/70 border border-dark-700' : 'bg-white border border-slate-200 shadow-sm'} p-4 md:p-6`}>
         <div className="relative z-10 max-w-4xl mx-auto">
-          <h1 className={`text-3xl md:text-4xl font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'} mb-4`}>Willkommen im Community-Wiki für Cytooxien</h1>
+          <h1 className={`text-3xl md:text-4xl font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'} mb-4`}>Willkommen im Community-Wiki für Kaktus Tycoon</h1>
           
-          <p className={`text-lg ${isDarkMode ? 'text-dark-300' : 'text-slate-600'} max-w-2xl mb-8`}>Hier findest du alle wichtigen Informationen zum Minecraft-Server Cytooxien, Spielmodi, Befehlen und vielem mehr.</p>
+          <p className={`text-lg ${isDarkMode ? 'text-dark-300' : 'text-slate-600'} max-w-2xl mb-8`}>Hier findest du alle wichtigen Informationen zum Kaktus Tycoon Spiel, Spielmodi, Befehlen und vielem mehr.</p>
           
           <div className="flex flex-wrap gap-4">
             <Link 
@@ -136,7 +137,7 @@ export function Home() {
             </Link>
           </div>
           
-          <div className={`mt-8 p-4 rounded-lg ${isDarkMode ? 'bg-dark-800/50 border border-dark-700/50' : 'bg-slate-50 border border-slate-200'} text-sm ${isDarkMode ? 'text-dark-400' : 'text-slate-500'}`}>Dieses Wiki wurde von einem Communitymitglied erstellt und wird von diesem betrieben. Es handelt sich um keine offizielle Seite von Cytooxien. Es findet keine Kooperation mit Cytooxien statt. Cytooxien haftet nicht und ist für diese Seite nicht verantwortlich.</div>
+          <div className={`mt-8 p-4 rounded-lg ${isDarkMode ? 'bg-dark-800/50 border border-dark-700/50' : 'bg-slate-50 border border-slate-200'} text-sm ${isDarkMode ? 'text-dark-400' : 'text-slate-500'}`}>Dieses Wiki wurde von einem Communitymitglied erstellt und wird von diesem betrieben. Es handelt sich um keine offizielle Seite von Kaktus Tycoon. Es findet keine Kooperation mit Kaktus Tycoon statt. Kaktus Tycoon haftet nicht und ist für diese Seite nicht verantwortlich.</div>
         </div>
       </section>
       
@@ -253,9 +254,9 @@ export function Home() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center text-sm text-dark-400">
                         <Clock className="h-4 w-4 mr-1" />
-                        <span>{format(new Date(update.created_at), 'dd.MM.yyyy')}</span>
+                        <span>{update.created_at ? format(new Date(update.created_at), 'dd.MM.yyyy') : update.date || 'Kein Datum'}</span>
                         <span className="mx-2">•</span>
-                        <span>Von {update.author}</span>
+                        <span>Von {update.author || 'KaktusTycoon Team'}</span>
                       </div>
                       <Link 
                         to={`/updates/${update.id}`}

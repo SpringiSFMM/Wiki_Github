@@ -56,16 +56,17 @@ export function Layout({ children }: LayoutProps) {
       >
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <Link 
-              to="/" 
-              className="flex items-center space-x-2 group"
-            >
-              <div className={`h-8 w-8 bg-gradient-to-br from-cyto-500 to-cyto-700 rounded-lg flex items-center justify-center shadow-md shadow-cyto-600/10 group-hover:shadow-lg group-hover:shadow-cyto-600/20 transition-all duration-300 transform group-hover:scale-105`}>
-                <img src="/images/logo.png" alt="Cytooxien Logo" className="h-5 w-5" />
-              </div>
-              <span className={`font-bold text-lg text-${isDarkMode ? 'white' : 'dark-900'}`}>Cytooxien</span>
-            </Link>
+            {/* Logo und Titel */}
+            <div className="flex items-center space-x-3">
+              <img 
+                src="/images/logo.webp" 
+                alt="Kaktus Tycoon Logo" 
+                className="h-10 w-10 rounded-full object-cover border-2 border-cyto-400"
+              />
+              <h1 className="hidden md:block text-xl font-bold tracking-tighter">
+                Kaktus Tycoon - Wiki
+              </h1>
+            </div>
             
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-1">
@@ -200,7 +201,7 @@ export function Layout({ children }: LayoutProps) {
         )}
       </header>
       
-      {/* Banner */}
+      {/* Banner - direkt nach dem Header */}
       {isBannerVisible && <InfoBanner onClose={() => setIsBannerVisible(false)} />}
       
       {/* Main Content */}
@@ -211,23 +212,19 @@ export function Layout({ children }: LayoutProps) {
       {/* Footer */}
       <footer className={`bg-${isDarkMode ? 'dark-900/30' : 'white'} border-t border-${isDarkMode ? 'dark-800/30' : 'dark-200/30'} mt-auto`}>
         <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Logo und Beschreibung */}
-            <div className="space-y-4">
-              <Link to="/" className="flex items-center space-x-2">
-                <div className={`h-8 w-8 bg-gradient-to-br from-cyto-500 to-cyto-700 rounded-lg flex items-center justify-center`}>
-                  <img src="/images/logo.png" alt="Cytooxien Logo" className="h-5 w-5" />
-                </div>
-                <span className={`font-bold text-lg text-${isDarkMode ? 'white' : 'dark-900'}`}>Cytooxien</span>
-              </Link>
-              <p className={`text-${isDarkMode ? 'dark-300' : 'dark-500'} text-sm`}>
-                Cytooxien ist ein Minecraft-Server mit Fokus auf eine freundliche Community und kreatives Spielen.
-              </p>
-              <div className={`text-${isDarkMode ? 'dark-400' : 'dark-500'} text-xs mt-2 p-2 bg-${isDarkMode ? 'dark-900/50' : 'white'} rounded-lg border border-${isDarkMode ? 'dark-800/30' : 'dark-200/30'}`}>
-                <p>Dieses Wiki wurde von einem Communitymitglied erstellt und wird von diesem betrieben. 
-                Es handelt sich um keine offizielle Seite von Cytooxien. Es findet keine Kooperation mit Cytooxien statt. 
-                Cytooxien haftet nicht und ist für diese Seite nicht verantwortlich.</p>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 py-8">
+            <div className="md:col-span-2">
+              <div className="flex items-center space-x-2 mb-4">
+                <img 
+                  src="/images/logo.webp" 
+                  alt="Kaktus Tycoon Logo" 
+                  className="h-10 w-10 rounded-full object-cover border-2 border-cyto-400"
+                />
+                <span className="text-xl font-bold">Kaktus Tycoon - Wiki</span>
               </div>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                Umfassende Informationen und Ressourcen für Kaktus Tycoon. Dieses Wiki ist keine offizielle Seite und wird von einem Community-Mitglied betrieben.
+              </p>
             </div>
             
             {/* Links */}
@@ -244,7 +241,7 @@ export function Layout({ children }: LayoutProps) {
                   <Link to="/server" className={`text-${isDarkMode ? 'dark-300' : 'dark-500'} hover:text-cyto-400 transition-colors duration-300`}>Server</Link>
                 </li>
                 <li>
-                  <a href="https://discord.gg/cytooxien" target="_blank" rel="noopener noreferrer" className={`text-${isDarkMode ? 'dark-300' : 'dark-500'} hover:text-cyto-400 transition-colors duration-300`}>Discord</a>
+                  <a href="https://discord.gg/kaktustycoon" target="_blank" rel="noopener noreferrer" className={`text-${isDarkMode ? 'dark-300' : 'dark-500'} hover:text-cyto-400 transition-colors duration-300`}>Discord</a>
                 </li>
                 <li>
                   <Link to="/contact" className={`text-${isDarkMode ? 'dark-300' : 'dark-500'} hover:text-cyto-400 transition-colors duration-300`}>Kontakt</Link>
@@ -262,7 +259,7 @@ export function Layout({ children }: LayoutProps) {
           </div>
           
           <div className={`border-t border-${isDarkMode ? 'dark-800/30' : 'dark-200/30'} mt-8 pt-6 flex flex-col md:flex-row justify-between items-center`}>
-            <p className={`text-${isDarkMode ? 'dark-400' : 'dark-500'} text-sm`}> 2023 Cytooxien-Wiki. Alle Rechte vorbehalten.</p>
+            <p className={`text-${isDarkMode ? 'dark-400' : 'dark-500'} text-sm`}> 2023 Kaktus Tycoon - Wiki. Alle Rechte vorbehalten.</p>
             <div className="flex space-x-4 mt-4 md:mt-0">
               <Link to="/terms" className={`text-${isDarkMode ? 'dark-400' : 'dark-500'} hover:text-${isDarkMode ? 'dark-200' : 'dark-900'} text-sm transition-colors duration-300`}>Nutzungsbedingungen</Link>
               <Link to="/privacy" className={`text-${isDarkMode ? 'dark-400' : 'dark-500'} hover:text-${isDarkMode ? 'dark-200' : 'dark-900'} text-sm transition-colors duration-300`}>Datenschutz</Link>

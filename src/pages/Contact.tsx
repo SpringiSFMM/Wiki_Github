@@ -62,11 +62,13 @@ export function Contact() {
         
         <div className="mt-10 p-5 bg-dark-900/70 border border-dark-800/50 rounded-lg">
           <h3 className="text-lg font-semibold text-dark-100 mb-2">Hinweis</h3>
-          <p className="text-dark-300">
-            Dieses Wiki wurde von einem Communitymitglied erstellt und wird von diesem betrieben. 
-            Es handelt sich um keine offizielle Seite von Cytooxien. Es findet keine Kooperation mit Cytooxien statt. 
-            Cytooxien haftet nicht und ist für diese Seite nicht verantwortlich.
-          </p>
+          <div className="p-4 rounded-lg bg-dark-900/50 border border-dark-800/50 text-sm">
+            <p className="text-dark-400">
+              Dieses Wiki wurde von einem Communitymitglied erstellt und wird von diesem betrieben.
+              Es handelt sich um keine offizielle Seite von Kaktus Tycoon. Es findet keine Kooperation mit Kaktus Tycoon statt.
+              Kaktus Tycoon haftet nicht und ist für diese Seite nicht verantwortlich.
+            </p>
+          </div>
         </div>
       </div>
     </div>

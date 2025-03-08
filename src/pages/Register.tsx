@@ -73,10 +73,10 @@ export function Register() {
         {/* Logo und Titel */}
         <div className="text-center mb-8">
           <div className="mx-auto h-16 w-16 bg-gradient-to-br from-cyto-500 to-cyto-700 rounded-xl flex items-center justify-center shadow-lg shadow-cyto-600/10 mb-4 transform hover:scale-105 transition-all duration-300">
-            <img src="/images/logo.png" alt="Cytooxien Logo" className="h-10 w-10" />
+            <img src="/images/logo.png" alt="Kaktus Tycoon Logo" className="h-10 w-10" />
           </div>
           <h2 className="text-3xl font-bold text-dark-100">Konto erstellen</h2>
-          <p className="mt-2 text-dark-300">Registriere dich für das Cytooxien Wiki</p>
+          <p className="mt-2 text-dark-300">Registriere dich für das Kaktus Tycoon - Wiki</p>
         </div>
         
         {/* Registrierungs-Formular */}
@@ -267,7 +267,7 @@ export function Register() {
         
         {/* Footer */}
         <div className="mt-8 text-center text-xs text-dark-400">
-          <p> 2023 Cytooxien-Wiki. Alle Rechte vorbehalten.</p>
+          <p> 2023 Kaktus Tycoon - Wiki. Alle Rechte vorbehalten.</p>
           <div className="mt-2 space-x-4">
             <Link to="/terms" className="hover:text-dark-300 transition-colors duration-300">Nutzungsbedingungen</Link>
             <Link to="/privacy" className="hover:text-dark-300 transition-colors duration-300">Datenschutz</Link>

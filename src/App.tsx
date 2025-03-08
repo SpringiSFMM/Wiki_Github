@@ -8,17 +8,19 @@ import { useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
 import axios from 'axios';
+import { Home } from './pages/Home';
+import { Wiki } from './pages/Wiki';
+import { Article } from './pages/Article';
+import { FWSites } from './pages/FWSites';
+import { Contact } from './pages/Contact';
+import { Register } from './pages/Register';
+import { Imprint } from './pages/Imprint';
 
 // Lazy-loaded components
-const Home = lazy(() => import('./pages/Home').then(module => ({ default: module.Home })));
-const Wiki = lazy(() => import('./pages/Wiki').then(module => ({ default: module.Wiki })));
-const WikiCategory = lazy(() => import('./pages/WikiCategory').then(module => ({ default: module.WikiCategory })));
-const WikiArticle = lazy(() => import('./pages/WikiArticle').then(module => ({ default: module.WikiArticle })));
-const FWSites = lazy(() => import('./pages/FWSites').then(module => ({ default: module.FWSites })));
+const WikiCategory = lazy(() => import('./pages/WikiCategory'));
+const WikiArticle = lazy(() => import('./pages/WikiArticle'));
 const UpdateDetail = lazy(() => import('./pages/UpdateDetail').then(module => ({ default: module.UpdateDetail })));
-const Contact = lazy(() => import('./pages/Contact').then(module => ({ default: module.Contact })));
 const Login = lazy(() => import('./pages/Login').then(module => ({ default: module.Login })));
-const Imprint = lazy(() => import('./pages/Imprint').then(module => ({ default: module.Imprint })));
 const Impressum = lazy(() => import('./pages/Impressum').then(module => ({ default: module.Impressum })));
 
 // Admin components
@@ -137,14 +139,14 @@ function App() {
                     {/* Public Routes */}
                     <Route index element={<Home />} />
                     <Route path="wiki" element={<Wiki />} />
-                    <Route path="wiki/category/:category" element={<WikiCategory />} />
-                    <Route path="wiki/:category/:article" element={<WikiArticle />} />
+                    <Route path="wiki/:category" element={<WikiCategory />} />
+                    <Route path="wiki/:categorySlug/:articleSlug" element={<Article />} />
                     <Route path="fwsites" element={<FWSites />} />
                     <Route path="updates/:id" element={<UpdateDetail />} />
                     <Route path="contact" element={<Contact />} />
                     <Route path="imprint" element={<Imprint />} />
-                    <Route path="impressum" element={<Impressum />} />
                     <Route path="login" element={<Login />} />
+                    <Route path="register" element={<Register />} />
 
                     {/* Protected Admin Routes */}
                     <Route path="admin">
@@ -164,6 +166,11 @@ function App() {
                         </ProtectedRoute>
                       } />
                       <Route path="articles/:id" element={
+                        <ProtectedRoute>
+                          <ArticleEditor />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="articles/:id/edit" element={
                         <ProtectedRoute>
                           <ArticleEditor />
                         </ProtectedRoute>
