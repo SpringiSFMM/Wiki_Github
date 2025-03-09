@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import { categories } from '../data/categories';
 import axios from 'axios';
+import { articles as staticArticles } from '../data/articles';
 
 // Definiere die Artikelstruktur
 interface Article {
@@ -32,12 +33,30 @@ export function Wiki() {
     const fetchArticles = async () => {
       try {
         setIsLoading(true);
+        console.log('Versuche Artikel von API zu laden...');
         const response = await axios.get('/api/articles');
-        setArticles(response.data);
-        setError(null);
+        
+        if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+          console.log(`${response.data.length} Artikel von API geladen`);
+          setArticles(response.data);
+          setError(null);
+        } else {
+          // Wenn keine Artikel zurückgegeben werden, verwende die statischen Artikel
+          console.log('Keine Artikel von API erhalten, verwende statische Artikel...');
+          setArticles(staticArticles);
+          setError(null);
+        }
       } catch (err) {
-        console.error('Fehler beim Laden der Artikel:', err);
-        setError('Die Artikel konnten nicht geladen werden. Bitte versuche es später erneut.');
+        console.error('Fehler beim Laden der Artikel von API:', err);
+        console.log('Verwende statische Artikel als Fallback...');
+        setArticles(staticArticles);
+        
+        // Nur einen Fehler anzeigen, wenn auch die Fallback-Artikel leer sind
+        if (!staticArticles || staticArticles.length === 0) {
+          setError('Die Artikel konnten nicht geladen werden. Bitte versuche es später erneut.');
+        } else {
+          setError(null);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -47,12 +66,14 @@ export function Wiki() {
   }, []);
 
   // Filtere Artikel basierend auf der Suche und Kategorie
-  const filteredArticles = articles.filter(article => {
-    const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          (article.description && article.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesCategory = selectedCategory ? article.category === selectedCategory : true;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredArticles = Array.isArray(articles) 
+    ? articles.filter(article => {
+        const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                              (article.description && article.description.toLowerCase().includes(searchQuery.toLowerCase()));
+        const matchesCategory = selectedCategory ? article.category === selectedCategory : true;
+        return matchesSearch && matchesCategory;
+      })
+    : [];
 
   return (
     <div className="max-w-7xl mx-auto p-4 py-6">
@@ -100,7 +121,9 @@ export function Wiki() {
             <div className={`flex flex-col space-y-2 ${isDarkMode ? 'bg-dark-900/50' : 'bg-white'} p-3 rounded-xl border ${isDarkMode ? 'border-dark-700' : 'border-gray-200'} backdrop-blur-sm`}>
               {categories.map((category) => {
                 // Zähle Artikel pro Kategorie
-                const categoryArticleCount = articles.filter(a => a.categorySlug === category.slug).length;
+                const categoryArticleCount = Array.isArray(articles) 
+                  ? articles.filter(a => a.categorySlug === category.slug).length
+                  : 0;
                 
                 return (
                   <button 

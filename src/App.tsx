@@ -15,6 +15,8 @@ import { FWSites } from './pages/FWSites';
 import { Contact } from './pages/Contact';
 import { Register } from './pages/Register';
 import { Imprint } from './pages/Imprint';
+import { Datenschutz } from './pages/Datenschutz';
+import { NotFound } from './pages/NotFound';
 
 // Lazy-loaded components
 const WikiCategory = lazy(() => import('./pages/WikiCategory'));
@@ -135,77 +137,105 @@ function App() {
             <MaintenanceCheck>
               <Suspense fallback={<LoadingFallback />}>
                 <Routes>
-                  <Route element={<Layout />}>
-                    {/* Public Routes */}
+                  <Route path="/" element={<Layout />}>
                     <Route index element={<Home />} />
-                    <Route path="wiki" element={<Wiki />} />
-                    <Route path="wiki/:category" element={<WikiCategory />} />
-                    <Route path="wiki/:categorySlug/:articleSlug" element={<Article />} />
-                    <Route path="fwsites" element={<FWSites />} />
-                    <Route path="updates/:id" element={<UpdateDetail />} />
-                    <Route path="contact" element={<Contact />} />
-                    <Route path="imprint" element={<Imprint />} />
-                    <Route path="login" element={<Login />} />
-                    <Route path="register" element={<Register />} />
-
-                    {/* Protected Admin Routes */}
-                    <Route path="admin">
-                      <Route index element={
-                        <ProtectedRoute>
-                          <Dashboard />
-                        </ProtectedRoute>
+                    <Route path="wiki" element={<Outlet />}>
+                      <Route index element={<Wiki />} />
+                      <Route path=":category" element={
+                        <Suspense fallback={<LoadingFallback />}>
+                          <WikiCategory />
+                        </Suspense>
                       } />
-                      <Route path="articles" element={
-                        <ProtectedRoute>
-                          <Articles />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="articles/new" element={
-                        <ProtectedRoute>
-                          <ArticleEditor />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="articles/:id" element={
-                        <ProtectedRoute>
-                          <ArticleEditor />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="articles/:id/edit" element={
-                        <ProtectedRoute>
-                          <ArticleEditor />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="categories" element={
-                        <ProtectedRoute>
-                          <Categories />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="users" element={
-                        <ProtectedRoute>
-                          <Users />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="settings" element={
-                        <ProtectedRoute>
-                          <Settings />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="updates" element={
-                        <ProtectedRoute>
-                          <UpdatesManager />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="updates/new" element={
-                        <ProtectedRoute>
-                          <UpdateEditor />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="updates/:id" element={
-                        <ProtectedRoute>
-                          <UpdateEditor />
-                        </ProtectedRoute>
+                      <Route path=":category/:article" element={
+                        <Suspense fallback={<LoadingFallback />}>
+                          <WikiArticle />
+                        </Suspense>
                       } />
                     </Route>
+                    <Route path="article/:categorySlug/:articleSlug" element={<Article />} />
+                    <Route path="updates/:id" element={
+                      <Suspense fallback={<LoadingFallback />}>
+                        <UpdateDetail />
+                      </Suspense>
+                    } />
+                    <Route path="fwsites" element={<FWSites />} />
+                    <Route path="contact" element={<Contact />} />
+                    <Route path="impressum" element={
+                      <Suspense fallback={<LoadingFallback />}>
+                        <Impressum />
+                      </Suspense>
+                    } />
+                    <Route path="datenschutz" element={
+                      <Suspense fallback={<LoadingFallback />}>
+                        <Datenschutz />
+                      </Suspense>
+                    } />
+                    <Route path="login" element={
+                      <Suspense fallback={<LoadingFallback />}>
+                        <Login />
+                      </Suspense>
+                    } />
+                    <Route path="register" element={<Register />} />
+
+                    <Route path="admin" element={<ProtectedRoute><Outlet /></ProtectedRoute>}>
+                      <Route index element={
+                        <Suspense fallback={<LoadingFallback />}>
+                          <Dashboard />
+                        </Suspense>
+                      } />
+                      <Route path="articles" element={
+                        <Suspense fallback={<LoadingFallback />}>
+                          <Articles />
+                        </Suspense>
+                      } />
+                      <Route path="articles/new" element={
+                        <Suspense fallback={<LoadingFallback />}>
+                          <ArticleEditor />
+                        </Suspense>
+                      } />
+                      <Route path="articles/:id" element={
+                        <Suspense fallback={<LoadingFallback />}>
+                          <ArticleEditor />
+                        </Suspense>
+                      } />
+                      <Route path="articles/:id/edit" element={
+                        <Suspense fallback={<LoadingFallback />}>
+                          <ArticleEditor />
+                        </Suspense>
+                      } />
+                      <Route path="categories" element={
+                        <Suspense fallback={<LoadingFallback />}>
+                          <Categories />
+                        </Suspense>
+                      } />
+                      <Route path="users" element={
+                        <Suspense fallback={<LoadingFallback />}>
+                          <Users />
+                        </Suspense>
+                      } />
+                      <Route path="settings" element={
+                        <Suspense fallback={<LoadingFallback />}>
+                          <Settings />
+                        </Suspense>
+                      } />
+                      <Route path="updates" element={
+                        <Suspense fallback={<LoadingFallback />}>
+                          <UpdatesManager />
+                        </Suspense>
+                      } />
+                      <Route path="updates/new" element={
+                        <Suspense fallback={<LoadingFallback />}>
+                          <UpdateEditor />
+                        </Suspense>
+                      } />
+                      <Route path="updates/:id" element={
+                        <Suspense fallback={<LoadingFallback />}>
+                          <UpdateEditor />
+                        </Suspense>
+                      } />
+                    </Route>
+
+                    <Route path="*" element={<NotFound />} />
                   </Route>
                 </Routes>
               </Suspense>

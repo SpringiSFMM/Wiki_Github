@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run mock-server\" \"vite\"",
-    "build": "tsc && vite build",
-    "build:vercel": "vite build",
+    "build": "node copy-articles.js && tsc && vite build",
+    "build:vercel": "node copy-articles.js && vite build",
+    "postbuild": "node copy-articles.js",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "setup-db": "tsx src/server/setup.ts",

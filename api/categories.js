@@ -11,51 +11,57 @@ export default function handler(req, res) {
     return;
   }
   
-  // Statische Liste von Kategorien zurückgeben
-  const categories = [
-    {
-      id: 1,
-      name: 'Spielgrundlagen',
-      icon: '🎮',
-      slug: 'grundlagen',
-      description: 'Grundlegende Informationen zum Spiel'
-    },
-    {
-      id: 2,
-      name: 'Wirtschaft & Handel',
-      icon: '💰',
-      slug: 'wirtschaft',
-      description: 'Alles über das Wirtschaftssystem'
-    },
-    {
-      id: 3,
-      name: 'Spielmechaniken',
-      icon: '⚙️',
-      slug: 'mechaniken',
-      description: 'Detaillierte Spielmechaniken'
-    },
-    {
-      id: 4,
-      name: 'Community & Events',
-      icon: '🎉',
-      slug: 'community',
-      description: 'Community-Aktivitäten und Events'
-    },
-    {
-      id: 5,
-      name: 'Regeln & Richtlinien',
-      icon: '📜',
-      slug: 'regeln',
-      description: 'Serverregeln und Richtlinien'
-    },
-    {
-      id: 6,
-      name: 'Hilfe & Support',
-      icon: '❓',
-      slug: 'hilfe',
-      description: 'Hilfestellung und Support'
-    }
-  ];
-  
-  res.status(200).json(categories);
+  try {
+    // Statische Liste von Kategorien zurückgeben
+    const categories = [
+      {
+        id: 1,
+        name: 'Spielgrundlagen',
+        icon: '🎮',
+        slug: 'grundlagen',
+        description: 'Grundlegende Informationen zum Spiel'
+      },
+      {
+        id: 2,
+        name: 'Wirtschaft & Handel',
+        icon: '💰',
+        slug: 'wirtschaft',
+        description: 'Alles über das Wirtschaftssystem'
+      },
+      {
+        id: 3,
+        name: 'Spielmechaniken',
+        icon: '⚙️',
+        slug: 'mechaniken',
+        description: 'Detaillierte Spielmechaniken'
+      },
+      {
+        id: 4,
+        name: 'Community & Events',
+        icon: '🎉',
+        slug: 'community',
+        description: 'Community-Aktivitäten und Events'
+      },
+      {
+        id: 5,
+        name: 'Regeln & Richtlinien',
+        icon: '📜',
+        slug: 'regeln',
+        description: 'Serverregeln und Richtlinien'
+      },
+      {
+        id: 6,
+        name: 'Hilfe & Support',
+        icon: '❓',
+        slug: 'hilfe',
+        description: 'Hilfestellung und Support'
+      }
+    ];
+    
+    res.status(200).json(categories);
+  } catch (error) {
+    console.error('Fehler beim Bereitstellen der Kategorien:', error);
+    // Im Fehlerfall ein leeres Array zurückgeben
+    res.status(200).json([]);
+  }
 } 

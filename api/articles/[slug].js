@@ -1,97 +1,137 @@
-// Serverless API-Route für einzelne Artikel
+// Serverless API-Endpunkt für einzelne Artikel
+// Dieser Endpunkt gibt einen Artikel basierend auf dem Slug zurück
 import fs from 'fs';
 import path from 'path';
 
-// Artikel aus der statischen Datei laden
-const loadArticles = () => {
+export default async function handler(req, res) {
   try {
-    // In Vercel müssen wir einen relativen Pfad verwenden
-    const articlesPath = path.join(process.cwd(), 'src', 'data', 'articles.ts');
-    const articlesContent = fs.readFileSync(articlesPath, 'utf8');
+    // CORS-Header setzen
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     
-    // Artikel aus der Datei extrahieren mittels Regex
-    const articleMatches = articlesContent.matchAll(/id:\s*(\d+)[^]*?title:\s*['"]([^'"]+)['"][^]*?slug:\s*['"]([^'"]+)['"][^]*?description:\s*['"]([^'"]+)['"][^]*?categorySlug:\s*['"]([^'"]+)['"][^]*?category:\s*['"]([^'"]+)['"][^]*?lastUpdated:\s*['"]([^'"]+)['"][^]*?author:\s*['"]([^'"]+)['"]/g);
-    
-    const articles = Array.from(articleMatches).map(match => ({
-      id: parseInt(match[1]),
-      title: match[2],
-      slug: match[3],
-      description: match[4],
-      categorySlug: match[5],
-      category: match[6],
-      lastUpdated: match[7],
-      author: match[8],
-      status: 'published'
-    }));
-    
-    return articles;
-  } catch (error) {
-    console.error('Fehler beim Laden der Artikel:', error);
-    return [];
-  }
-};
-
-// Artikel-Inhalt laden
-const loadArticleContent = (categorySlug, articleSlug) => {
-  try {
-    const contentPath = path.join(process.cwd(), 'src', 'data', 'articleContents', categorySlug, `${articleSlug}.md`);
-    
-    if (fs.existsSync(contentPath)) {
-      return fs.readFileSync(contentPath, 'utf8');
+    // Preflight-Anfragen beantworten
+    if (req.method === 'OPTIONS') {
+      res.status(200).end();
+      return;
     }
     
-    return null;
+    // Nur GET-Anfragen zulassen
+    if (req.method !== 'GET') {
+      res.status(405).json({ error: 'Methode nicht erlaubt' });
+      return;
+    }
+    
+    // Slug aus der URL extrahieren
+    const { slug } = req.query;
+    
+    if (!slug) {
+      res.status(400).json({ error: 'Artikel-Slug nicht angegeben' });
+      return;
+    }
+    
+    // Versuche, die statische JSON-Datei zu lesen
+    try {
+      // Pfad zur JSON-Datei (relativ zum api-Verzeichnis)
+      const jsonPath = path.join(process.cwd(), 'public', 'data', 'articles.json');
+      
+      if (fs.existsSync(jsonPath)) {
+        const jsonContent = fs.readFileSync(jsonPath, 'utf8');
+        const articlesData = JSON.parse(jsonContent);
+        
+        // Artikel mit dem angegebenen Slug finden
+        const article = articlesData.articles.find(article => article.slug === slug);
+        
+        if (article) {
+          // Versuche, den Inhalt des Artikels zu laden
+          try {
+            const articleContentPath = path.join(
+              process.cwd(), 
+              'public', 
+              'articleContents', 
+              article.categorySlug, 
+              `${article.slug}.md`
+            );
+            
+            // Prüfe, ob der Artikel existiert
+            if (fs.existsSync(articleContentPath)) {
+              const content = fs.readFileSync(articleContentPath, 'utf8');
+              
+              // Artikel mit Inhalt zurückgeben
+              res.status(200).json({
+                ...article,
+                content
+              });
+            } else {
+              // Alternative Pfade versuchen
+              const alternativePath = path.join(
+                process.cwd(), 
+                'public', 
+                'data', 
+                'articleContents', 
+                article.categorySlug, 
+                `${article.slug}.md`
+              );
+              
+              if (fs.existsSync(alternativePath)) {
+                const content = fs.readFileSync(alternativePath, 'utf8');
+                
+                // Artikel mit Inhalt zurückgeben
+                res.status(200).json({
+                  ...article,
+                  content
+                });
+              } else {
+                // Kein Inhalt gefunden, aber Artikel-Metadaten zurückgeben
+                res.status(200).json({
+                  ...article,
+                  content: "# Artikel-Inhalt nicht gefunden\n\nDer Inhalt dieses Artikels konnte nicht geladen werden."
+                });
+              }
+            }
+          } catch (contentError) {
+            console.error('Fehler beim Laden des Artikelinhalts:', contentError);
+            // Artikel ohne Inhalt zurückgeben
+            res.status(200).json({
+              ...article,
+              content: "# Fehler\n\nBeim Laden des Artikelinhalts ist ein Fehler aufgetreten."
+            });
+          }
+        } else {
+          res.status(404).json({ error: 'Artikel nicht gefunden' });
+        }
+      } else {
+        // Fallback: Hartcodierte Artikeldaten verwenden
+        const articles = [
+          {
+            id: 1,
+            title: 'Erste Schritte in Kaktus Tycoon',
+            slug: 'erste-schritte',
+            description: 'Ein Leitfaden für neue Spieler, um in Kaktus Tycoon durchzustarten.',
+            categorySlug: 'grundlagen',
+            category: 'Spielgrundlagen',
+            lastUpdated: '15. März 2024',
+            author: 'KaktusTycoon Team',
+            content: "# Erste Schritte in Kaktus Tycoon\n\nWillkommen bei Kaktus Tycoon! Dieser Artikel hilft dir beim Einstieg."
+          },
+          // weitere Artikel...
+        ];
+        
+        // Artikel mit dem angegebenen Slug finden
+        const article = articles.find(article => article.slug === slug);
+        
+        if (article) {
+          res.status(200).json(article);
+        } else {
+          res.status(404).json({ error: 'Artikel nicht gefunden' });
+        }
+      }
+    } catch (error) {
+      console.error('Fehler beim Verarbeiten des Artikels:', error);
+      res.status(500).json({ error: 'Fehler beim Verarbeiten des Artikels' });
+    }
   } catch (error) {
-    console.error('Fehler beim Laden des Artikelinhalts:', error);
-    return null;
+    console.error('Serverinterner Fehler:', error);
+    res.status(500).json({ error: 'Serverinterner Fehler' });
   }
-};
-
-// CORS-Header setzen
-const setCorsHeaders = (res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-};
-
-export default function handler(req, res) {
-  // CORS-Header setzen
-  setCorsHeaders(res);
-  
-  // OPTIONS-Anfragen für CORS Preflight bearbeiten
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-  
-  const { slug } = req.query;
-  
-  // Artikel-Metadaten laden
-  const allArticles = loadArticles();
-  const article = allArticles.find(a => a.slug === slug && a.status === 'published');
-  
-  if (!article) {
-    res.status(404).json({ 
-      message: 'Artikel nicht gefunden oder nicht veröffentlicht',
-      requestedSlug: slug
-    });
-    return;
-  }
-  
-  // Artikel-Inhalt laden
-  const content = loadArticleContent(article.categorySlug, article.slug);
-  
-  if (!content) {
-    res.status(404).json({ 
-      message: 'Artikelinhalt nicht gefunden',
-      requestedSlug: slug
-    });
-    return;
-  }
-  
-  // Vollständigen Artikel zurückgeben
-  res.status(200).json({
-    ...article,
-    content
-  });
 } 

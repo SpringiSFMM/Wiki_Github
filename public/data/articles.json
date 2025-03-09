@@ -1,0 +1,44 @@
+{
+  "articles": [
+    {
+      "id": 1,
+      "title": "Erste Schritte in Kaktus Tycoon",
+      "slug": "erste-schritte",
+      "description": "Ein Leitfaden für neue Spieler, um in Kaktus Tycoon durchzustarten.",
+      "categorySlug": "grundlagen",
+      "category": "Spielgrundlagen",
+      "lastUpdated": "15. März 2024",
+      "author": "KaktusTycoon Team"
+    },
+    {
+      "id": 2,
+      "title": "Grundlegende Spielbefehle",
+      "slug": "spielbefehle",
+      "description": "Eine Übersicht aller wichtigen Befehle im Spiel.",
+      "categorySlug": "grundlagen",
+      "category": "Spielgrundlagen",
+      "lastUpdated": "15. März 2024",
+      "author": "KaktusTycoon Team"
+    },
+    {
+      "id": 13,
+      "title": "Das Spielsystem von Kaktus Tycoon",
+      "slug": "spielsystem",
+      "description": "Detaillierte Erklärung des Spielsystems und der Progression.",
+      "categorySlug": "grundlagen",
+      "category": "Spielgrundlagen",
+      "lastUpdated": "16. März 2024",
+      "author": "KaktusTycoon Team"
+    },
+    {
+      "id": 14,
+      "title": "Ausrüstung & Verbesserungen",
+      "slug": "ausruestung",
+      "description": "Alles über Ausrüstungsgegenstände und wie du sie verbesserst.",
+      "categorySlug": "grundlagen",
+      "category": "Spielgrundlagen",
+      "lastUpdated": "16. März 2024",
+      "author": "KaktusTycoon Team"
+    }
+  ]
+} 

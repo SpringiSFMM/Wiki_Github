@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { categories } from '../data/categories';
+import { articles as staticArticles } from '../data/articles'; // Importiere statische Artikel
 import { useTheme } from '../contexts/ThemeContext';
 import { ChevronLeft, ChevronRight, Clock, User } from 'lucide-react';
 import axios from 'axios';
@@ -31,10 +32,45 @@ export function WikiCategory() {
     const fetchArticles = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('/api/articles');
-        // Filter für die aktuelle Kategorie (erfolgt jetzt auf Clientseite)
-        const categoryArticles = response.data.filter((article: Article) => article.categorySlug === categorySlug);
-        setArticles(categoryArticles);
+        console.log(`Lade Artikel für Kategorie: ${categorySlug}`);
+        
+        // Versuche, die Artikel von der API zu laden
+        try {
+          const response = await axios.get('/api/articles');
+          console.log('API-Antwort:', response.data);
+          
+          // Sicherstellen, dass response.data ein Array ist
+          if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+            console.log(`${response.data.length} Artikel von API geladen`);
+            
+            // Filter für die aktuelle Kategorie (erfolgt jetzt auf Clientseite)
+            const categoryArticles = response.data.filter((article: Article) => article.categorySlug === categorySlug);
+            console.log(`${categoryArticles.length} Artikel für Kategorie ${categorySlug} gefunden`);
+            
+            if (categoryArticles.length > 0) {
+              setArticles(categoryArticles);
+              setError(null);
+              setLoading(false);
+              return;
+            } else {
+              console.log(`Keine Artikel für Kategorie ${categorySlug} in API-Antwort gefunden, versuche statische Daten...`);
+            }
+          } else {
+            console.log('Keine gültigen Artikel von API erhalten, versuche statische Daten...');
+          }
+        } catch (apiError) {
+          console.error('Fehler beim Laden der Artikel von API:', apiError);
+          console.log('Verwende statische Artikel als Fallback...');
+        }
+        
+        // Fallback: Statische Artikel aus den importierten Daten filtern
+        console.log(`Filtere statische Artikel für Kategorie: ${categorySlug}`);
+        console.log(`Verfügbare statische Artikel: ${staticArticles.length}`);
+        
+        const filteredStaticArticles = staticArticles.filter(article => article.categorySlug === categorySlug);
+        console.log(`${filteredStaticArticles.length} statische Artikel für Kategorie ${categorySlug} gefunden`);
+        
+        setArticles(filteredStaticArticles);
         setError(null);
       } catch (err) {
         console.error('Fehler beim Laden der Artikel:', err);
@@ -48,6 +84,11 @@ export function WikiCategory() {
       fetchArticles();
     }
   }, [categorySlug]);
+
+  // Debugging-Ausgabe
+  useEffect(() => {
+    console.log(`Aktuelle Artikel in Kategorie ${categorySlug}:`, articles);
+  }, [articles, categorySlug]);
 
   if (!category) {
     return (

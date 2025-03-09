@@ -102,13 +102,21 @@ export function Home() {
   };
 
   // Fetch latest updates
-  const { data: updates = [], isLoading } = useQuery<Update[]>({
+  const { data: updates, isLoading } = useQuery<Update[]>({
     queryKey: ['latest-updates'],
     queryFn: async () => {
-      const response = await axios.get('/api/updates');
-      return response.data;
+      try {
+        const response = await axios.get('/api/updates');
+        return Array.isArray(response.data) ? response.data : [];
+      } catch (error) {
+        console.error('Fehler beim Laden der Updates:', error);
+        return [];
+      }
     },
   });
+
+  // Sicherstellen, dass updates immer ein Array ist
+  const safeUpdates = Array.isArray(updates) ? updates : [];
 
   return (
     <div className="space-y-12 max-w-6xl mx-auto px-4 py-6">
@@ -229,13 +237,13 @@ export function Home() {
               <div className="text-center py-8">
                 <div className="text-dark-300">Updates werden geladen...</div>
               </div>
-            ) : updates.length === 0 ? (
+            ) : safeUpdates.length === 0 ? (
               <div className="text-center py-8">
                 <div className="text-dark-300">Noch keine Updates verfügbar.</div>
               </div>
             ) : (
-              updates.map((update, index) => (
-                <div key={update.id} className={`flex gap-6 items-start ${index < updates.length - 1 ? 'pb-6 border-b border-dark-700' : ''} hover:bg-dark-800/30 p-4 rounded-lg transition-all duration-300 -mx-4`}>
+              safeUpdates.map((update, index) => (
+                <div key={update.id} className={`flex gap-6 items-start ${index < safeUpdates.length - 1 ? 'pb-6 border-b border-dark-700' : ''} hover:bg-dark-800/30 p-4 rounded-lg transition-all duration-300 -mx-4`}>
                   <div className="flex-shrink-0 w-16 h-16 bg-cyto-600/20 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:bg-cyto-600/30">
                     <Info className="h-8 w-8 text-cyto-400 transition-colors duration-300 group-hover:text-cyto-300" />
                   </div>

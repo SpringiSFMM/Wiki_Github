@@ -1,59 +1,94 @@
-// Serverless API-Route für Artikel
+// Serverless API-Endpunkt für Artikel
+// Dieser Endpunkt gibt alle Artikel zurück
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-// Artikel aus der statischen Datei laden
-const loadArticles = () => {
+export default async function handler(req, res) {
   try {
-    // In Vercel müssen wir einen relativen Pfad verwenden
-    const articlesPath = path.join(process.cwd(), 'src', 'data', 'articles.ts');
-    const articlesContent = fs.readFileSync(articlesPath, 'utf8');
+    // CORS-Header setzen
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     
-    // Artikel aus der Datei extrahieren mittels Regex
-    const articleMatches = articlesContent.matchAll(/id:\s*(\d+)[^]*?title:\s*['"]([^'"]+)['"][^]*?slug:\s*['"]([^'"]+)['"][^]*?description:\s*['"]([^'"]+)['"][^]*?categorySlug:\s*['"]([^'"]+)['"][^]*?category:\s*['"]([^'"]+)['"][^]*?lastUpdated:\s*['"]([^'"]+)['"][^]*?author:\s*['"]([^'"]+)['"]/g);
+    // Preflight-Anfragen beantworten
+    if (req.method === 'OPTIONS') {
+      res.status(200).end();
+      return;
+    }
     
-    const articles = Array.from(articleMatches).map(match => ({
-      id: parseInt(match[1]),
-      title: match[2],
-      slug: match[3],
-      description: match[4],
-      categorySlug: match[5],
-      category: match[6],
-      lastUpdated: match[7],
-      author: match[8],
-      status: 'published'
-    }));
+    // Nur GET-Anfragen zulassen
+    if (req.method !== 'GET') {
+      res.status(405).json({ error: 'Methode nicht erlaubt' });
+      return;
+    }
     
-    return articles;
+    // Versuche, die statische JSON-Datei zu lesen
+    try {
+      // Pfad zur JSON-Datei (relative zum api-Verzeichnis)
+      const jsonPath = path.join(process.cwd(), 'public', 'data', 'articles.json');
+      
+      if (fs.existsSync(jsonPath)) {
+        const jsonContent = fs.readFileSync(jsonPath, 'utf8');
+        const articlesData = JSON.parse(jsonContent);
+        
+        res.status(200).json(articlesData.articles);
+      } else {
+        // Fallback: Direkt aus Quellmodul artikelArray importieren (falls verfügbar)
+        console.log('Artikel-JSON nicht gefunden, generiere Artikel aus dem Artikel-Skript');
+        
+        // Hartcodierte Artikelliste aus src/data/articles.ts
+        const articles = [
+          {
+            id: 1,
+            title: 'Erste Schritte in Kaktus Tycoon',
+            slug: 'erste-schritte',
+            description: 'Ein Leitfaden für neue Spieler, um in Kaktus Tycoon durchzustarten.',
+            categorySlug: 'grundlagen',
+            category: 'Spielgrundlagen',
+            lastUpdated: '15. März 2024',
+            author: 'KaktusTycoon Team'
+          },
+          {
+            id: 2,
+            title: 'Grundlegende Spielbefehle',
+            slug: 'spielbefehle',
+            description: 'Eine Übersicht aller wichtigen Befehle im Spiel.',
+            categorySlug: 'grundlagen',
+            category: 'Spielgrundlagen',
+            lastUpdated: '15. März 2024',
+            author: 'KaktusTycoon Team'
+          },
+          {
+            id: 13,
+            title: 'Das Spielsystem von Kaktus Tycoon',
+            slug: 'spielsystem',
+            description: 'Detaillierte Erklärung des Spielsystems und der Progression.',
+            categorySlug: 'grundlagen',
+            category: 'Spielgrundlagen',
+            lastUpdated: '16. März 2024',
+            author: 'KaktusTycoon Team'
+          },
+          {
+            id: 14,
+            title: 'Ausrüstung & Verbesserungen',
+            slug: 'ausruestung',
+            description: 'Alles über Ausrüstungsgegenstände und wie du sie verbesserst.',
+            categorySlug: 'grundlagen',
+            category: 'Spielgrundlagen',
+            lastUpdated: '16. März 2024',
+            author: 'KaktusTycoon Team'
+          }
+        ];
+        
+        res.status(200).json(articles);
+      }
+    } catch (error) {
+      console.error('Fehler beim Verarbeiten der Artikel:', error);
+      res.status(500).json({ error: 'Fehler beim Verarbeiten der Artikel' });
+    }
   } catch (error) {
-    console.error('Fehler beim Laden der Artikel:', error);
-    return [];
+    console.error('Serverinterner Fehler:', error);
+    res.status(500).json({ error: 'Serverinterner Fehler' });
   }
-};
-
-// CORS-Header setzen
-const setCorsHeaders = (res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-};
-
-export default function handler(req, res) {
-  // CORS-Header setzen
-  setCorsHeaders(res);
-  
-  // OPTIONS-Anfragen für CORS Preflight bearbeiten
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-  
-  // Alle Artikel laden
-  const allArticles = loadArticles();
-  
-  // Nur veröffentlichte Artikel zurückgeben (status === 'published')
-  const publishedArticles = allArticles.filter(article => article.status === 'published');
-  
-  // Erfolgreiche Antwort senden
-  res.status(200).json(publishedArticles);
 } 

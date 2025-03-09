@@ -126,7 +126,7 @@ app.get('/api/articles/:slug', (req, res) => {
 // Get admin profile
 app.get('/api/admin/profile', (req, res) => {
   console.log('Fetching admin profile');
-  res.json({
+    res.json({
     id: '1',
     username: 'admin',
     email: 'admin@example.com',
@@ -169,7 +169,7 @@ app.put('/api/admin/settings', (req, res) => {
 // Get admin statistics
 app.get('/api/admin/statistics', (req, res) => {
   console.log('Fetching admin statistics');
-  res.json({
+    res.json({
     articlesByCategory: [
       { category: 'Grundlagen', count: 5 },
       { category: 'Mechaniken', count: 8 },

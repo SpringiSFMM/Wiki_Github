@@ -238,7 +238,7 @@ export function Layout({ children }: LayoutProps) {
                   <Link to="/wiki" className={`text-${isDarkMode ? 'dark-300' : 'dark-500'} hover:text-cyto-400 transition-colors duration-300`}>Wiki</Link>
                 </li>
                 <li>
-                  <Link to="/server" className={`text-${isDarkMode ? 'dark-300' : 'dark-500'} hover:text-cyto-400 transition-colors duration-300`}>Server</Link>
+                  <Link to="/fwsites" className={`text-${isDarkMode ? 'dark-300' : 'dark-500'} hover:text-cyto-400 transition-colors duration-300`}>FW-Sites</Link>
                 </li>
                 <li>
                   <a href="https://discord.gg/kaktustycoon" target="_blank" rel="noopener noreferrer" className={`text-${isDarkMode ? 'dark-300' : 'dark-500'} hover:text-cyto-400 transition-colors duration-300`}>Discord</a>
@@ -259,11 +259,10 @@ export function Layout({ children }: LayoutProps) {
           </div>
           
           <div className={`border-t border-${isDarkMode ? 'dark-800/30' : 'dark-200/30'} mt-8 pt-6 flex flex-col md:flex-row justify-between items-center`}>
-            <p className={`text-${isDarkMode ? 'dark-400' : 'dark-500'} text-sm`}> 2023 Kaktus Tycoon - Wiki. Alle Rechte vorbehalten.</p>
+            <p className={`text-${isDarkMode ? 'dark-400' : 'dark-500'} text-sm`}>© 2023 Kaktus Tycoon - Wiki. Alle Rechte vorbehalten.</p>
             <div className="flex space-x-4 mt-4 md:mt-0">
-              <Link to="/terms" className={`text-${isDarkMode ? 'dark-400' : 'dark-500'} hover:text-${isDarkMode ? 'dark-200' : 'dark-900'} text-sm transition-colors duration-300`}>Nutzungsbedingungen</Link>
-              <Link to="/privacy" className={`text-${isDarkMode ? 'dark-400' : 'dark-500'} hover:text-${isDarkMode ? 'dark-200' : 'dark-900'} text-sm transition-colors duration-300`}>Datenschutz</Link>
-              <Link to="/" className={`text-${isDarkMode ? 'dark-400' : 'dark-500'} hover:text-${isDarkMode ? 'dark-200' : 'dark-900'} text-sm transition-colors duration-300`}>Impressum</Link>
+              <Link to="/impressum" className={`text-${isDarkMode ? 'dark-400' : 'dark-500'} hover:text-${isDarkMode ? 'dark-200' : 'dark-900'} text-sm transition-colors duration-300`}>Impressum</Link>
+              <Link to="/datenschutz" className={`text-${isDarkMode ? 'dark-400' : 'dark-500'} hover:text-${isDarkMode ? 'dark-200' : 'dark-900'} text-sm transition-colors duration-300`}>Datenschutz</Link>
               <Link to="/contact" className={`text-${isDarkMode ? 'dark-400' : 'dark-500'} hover:text-${isDarkMode ? 'dark-200' : 'dark-900'} text-sm transition-colors duration-300`}>Kontakt</Link>
             </div>
           </div>
