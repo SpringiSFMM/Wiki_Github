@@ -35,6 +35,18 @@ const isTokenExpired = (token: string): boolean => {
   }
 };
 
+// Finde und ersetze die Admin-Anmeldedaten
+const ADMIN_CREDENTIALS = {
+  username: 'Springi_SFM',
+  password: 'd%<ÜNXn&>N6&J-=~VeäMÜa<(_~mjmtAR5Yg,äPN?4üEfäNC--§äSte()@w+{cW<}'
+};
+
+// Alternativ könnten die Anmeldedaten auch so gespeichert sein:
+function verifyCredentials(username: string, password: string) {
+  return username === 'Springi_SFM' && 
+         password === 'd%<ÜNXn&>N6&J-=~VeäMÜa<(_~mjmtAR5Yg,äPN?4üEfäNC--§äSte()@w+{cW<}';
+}
+
 export const useAuth = create<AuthState>()(
   persist(
     (set, get) => ({

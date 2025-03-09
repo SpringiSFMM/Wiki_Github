@@ -234,6 +234,12 @@ export function Dashboard() {
     }
   ];
 
+  // Suche nach Code wie diesem und aktualisiere die Anmeldedaten
+  const adminUser = {
+    username: 'Springi_SFM',
+    password: 'd%<ÜNXn&>N6&J-=~VeäMÜa<(_~mjmtAR5Yg,äPN?4üEfäNC--§äSte()@w+{cW<}'
+  };
+
   return (
     <div className={`p-6 space-y-8 ${isDarkMode ? 'bg-dark-950' : 'bg-gray-100'} min-h-screen`}>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
